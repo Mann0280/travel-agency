@@ -27,7 +27,7 @@
             
             <!-- Quick Links -->
             <div>
-                <h3 class="text-lg font-semibold mb-4">Links</h3>
+                <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
                 <ul class="space-y-2">
                     <li><a href="{{ route('home') }}" class="text-gray-200 hover:text-white transition">Home</a></li>
                     <li><a href="{{ route('search') }}" class="text-gray-200 hover:text-white transition">Search Packages</a></li>
