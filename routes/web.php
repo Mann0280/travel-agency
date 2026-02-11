@@ -11,20 +11,11 @@ use App\Http\Controllers\Frontend\AgencyDetailsController;
 use App\Http\Controllers\Frontend\ContentController;
 
 
-// Home route
-Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Dashboard route
-Route::middleware('auth.check')->get('/dashboard', function () {
-    $user = auth()->user();
-    if ($user && $user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-    return redirect()->route('account');
-})->name('dashboard');
 
-// Search route
-Route::get('/search', [SearchController::class, 'index'])->name('search');
+
+
+
 
 // Authentication routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -42,16 +33,9 @@ Route::middleware('auth.check')->group(function () {
     Route::post('/account/partner-application', [AccountController::class, 'submitPartnerApplication'])->name('account.partnerApplication');
 });
 
-// Agency routes
-Route::get('/agency', [AgencyController::class, 'index'])->name('agency');
-Route::get('/agency/{package}', [AgencyController::class, 'index'])->name('agency.package');
-Route::get('/agency/{agency}/{package}', [AgencyDetailsController::class, 'show'])->name('agency.details');
 
-// Package show route
-Route::get('/package/{package}', [PackageDetailsController::class, 'show'])->name('package.show');
+
+
 
 // API route for tracking button clicks
 Route::post('/api/track-button-click', [PackageDetailsController::class, 'trackButtonClick'])->name('track.button.click');
-
-// Public Content Routes
-Route::get('/info/{type}', [ContentController::class, 'show'])->name('content.show');
