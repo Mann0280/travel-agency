@@ -4,6 +4,20 @@
 @section('page_title', 'Bookings Management')
 
 @section('content')
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                    The Bookings module is currently disabled.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+{{--
 <style>
     /* Exact CSS matching from Admin */
     .card {
@@ -292,6 +306,7 @@
     </div>
 </div>
 
+--}}
 @endsection
 
 @push('scripts')

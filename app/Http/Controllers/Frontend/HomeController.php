@@ -39,11 +39,13 @@ class HomeController extends Controller
         $featuredPackages = Package::with(['destination', 'agency'])
             ->approved()
             ->where('is_featured', true)
-            ->take(26)
+            ->take(24)
             ->get();
 
         // Fetch all cities and destinations for dynamic search validation and UI
-        $dbDepartureCities = Package::approved()->get()->flatMap(fn($p) => $p->departure_cities ?? [])->unique()->values()->all();
+        $dbFromCities = Package::approved()->whereNotNull('from_city')->pluck('from_city')->unique()->toArray();
+        $dbDepartureCitiesArray = Package::approved()->get()->flatMap(fn($p) => $p->departure_cities ?? [])->unique()->toArray();
+        $dbDepartureCities = collect(array_merge($dbFromCities, $dbDepartureCitiesArray))->unique()->values()->all();
         $dbDestinations = Destination::whereHas('packages', fn($q) => $q->approved())->pluck('name')->unique()->values()->all();
 
         // Get upcoming travels (active stories)
@@ -108,7 +110,10 @@ class HomeController extends Controller
 
                 // Filter by departure city
                 if (!empty($selectedFrom)) {
-                    $query->whereJsonContains('departure_cities', $selectedFrom);
+                    $query->where(function($q) use ($selectedFrom) {
+                        $q->where('from_city', $selectedFrom)
+                          ->orWhereJsonContains('departure_cities', $selectedFrom);
+                    });
                 }
 
                 // Filter by destination

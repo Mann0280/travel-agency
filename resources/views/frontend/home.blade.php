@@ -8,7 +8,7 @@
     <div class="text-center">
         <!-- Logo with animation -->
         <div class="mb-6 animate-pulse">
-            <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEE' }} Logo" class="w-32 h-32 md:w-40 md:h-40 mx-auto">
+            <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEEE' }} Logo" class="w-32 h-32 md:w-40 md:h-40 mx-auto">
         </div>
 
         <!-- Loading spinner -->
@@ -601,40 +601,26 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
                 @foreach ($featuredPackages as $index => $package)
                     @php
-                    // Determine if this card should be clickable (first 6 packages)
-                    $isClickable = $index < 6;
-
                     // Set the appropriate link
-                    if ($isClickable) {
-                        $link = route('agency', ['package' => $package->name, 'id' => $package->id]);
-                    }
+                    $link = route('agency', ['package' => $package->name, 'id' => $package->id]);
                     @endphp
 
-                    @if ($isClickable)
-                        <a href="{{ $link }}"
-                            class="block bg-background border border-secondary rounded-md shadow-sm overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-md relative featured-card"
-                            data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
-                    @else
-                        <div class="bg-background border border-secondary rounded-md shadow-sm overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-md relative featured-card"
-                            data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
-                    @endif
+                    <a href="{{ $link }}"
+                        class="block bg-background border border-secondary rounded-md shadow-sm overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-md relative featured-card"
+                        data-aos="fade-up" data-aos-delay="{{ ($index % 3) * 100 }}">
 
-                            <!-- Only show image and name for featured packages -->
-                            <div class="relative">
-                                <img src="{{ $package->image_url }}" alt="{{ $package->name }}"
-                                    class="w-full h-20 sm:h-24 object-cover">
-                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                    <h3 class="text-white font-bold text-xs text-center px-1 leading-tight">
-                                        {{ $package->name }}
-                                    </h3>
-                                </div>
+                        <!-- Only show image and name for featured packages -->
+                        <div class="relative">
+                            <img src="{{ $package->image_url }}" alt="{{ $package->name }}"
+                                class="w-full h-20 sm:h-24 object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <h3 class="text-white font-bold text-xs text-center px-1 leading-tight">
+                                    {{ $package->name }}
+                                </h3>
                             </div>
-
-                    @if ($isClickable)
-                        </a>
-                    @else
                         </div>
-                    @endif
+
+                    </a>
                 @endforeach
             </div>
 

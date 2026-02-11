@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\AccountContentController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ClickAnalyticsController;
+use App\Http\Controllers\Admin\PartnerApplicationController;
 
 // Admin Authentication Routes
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
@@ -43,6 +45,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/bookings/{booking}/edit', [BookingController::class, 'edit'])->name('bookings.edit');
     Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
+    
+    // Click Analytics
+    Route::get('/analytics/clicks', [ClickAnalyticsController::class, 'index'])->name('analytics.clicks');
     
     // Destinations
     Route::resource('destinations', DestinationController::class);
@@ -104,6 +109,14 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
         Route::post('/feedback/category', [AccountContentController::class, 'storeFeedbackCategory'])->name('feedback.category.store');
         Route::post('/feedback/category/{category}/update', [AccountContentController::class, 'updateFeedbackCategory'])->name('feedback.category.update');
         Route::post('/feedback/category/{category}/delete', [AccountContentController::class, 'destroyFeedbackCategory'])->name('feedback.category.destroy');
+    });
+
+    // Partner Applications
+    Route::prefix('partner-applications')->name('partner-applications.')->group(function () {
+        Route::get('/', [PartnerApplicationController::class, 'index'])->name('index');
+        Route::get('/{application}', [PartnerApplicationController::class, 'show'])->name('show');
+        Route::post('/{application}/approve', [PartnerApplicationController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [PartnerApplicationController::class, 'reject'])->name('reject');
     });
 
     // Users

@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'ZUBEE - Travel Agencies')
+@section('title', ($site_settings->get('site_name') ?? 'ZUBEEE') . ' - Travel Agencies')
 
 @section('content')
 <style>

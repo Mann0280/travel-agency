@@ -20,12 +20,17 @@ class AccountController extends Controller
         }
 
         $user = Auth::user();
+        
+        // Load partner application and agency relationships
+        $user->load(['partnerApplication', 'agency']);
 
         // Get current tab from request or default to profile
         $currentTab = $request->input('tab', 'profile');
         
         // Fetch real bookings from database
-        $bookings = $user->bookings()->with('package')->latest()->take(5)->get()->map(function($booking) {
+        $rawBookings = $user->bookings()->with('package')->latest()->take(5)->get();
+        
+        $bookings = $rawBookings->map(function($booking) {
             return [
                 'id' => 'ZB' . str_pad($booking->id, 6, '0', STR_PAD_LEFT),
                 'title' => $booking->package->name ?? 'Package Deleted',
@@ -39,24 +44,22 @@ class AccountController extends Controller
         });
 
         // Fetch dynamic content
-        $faqs = AccountContent::where('type', 'faq')
-            ->where('is_active', true)
+        $faqs = \App\Models\Faq::where('status', 'active')
             ->orderBy('sort_order')
             ->get();
 
-        $aboutContent = AccountContent::where('type', 'about')
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        $about = AccountContent::where('slug', 'about')->first();
+        $aboutData = $about ? $about->data : [];
+
+        $partner = AccountContent::where('slug', 'partner')->first();
+        $partnerData = $partner ? $partner->data : [];
             
-        $policyContent = AccountContent::where('type', 'policy')
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
+        $policy = AccountContent::where('type', 'policy')->first(); // Keeping fallback for legacy if needed/mixed
+        $policyContent = $policy ? $policy->data : [];
 
         $feedbackCategories = \App\Models\FeedbackCategory::orderBy('label')->get();
 
-        return view('user.account', compact('currentTab', 'bookings', 'faqs', 'aboutContent', 'policyContent', 'feedbackCategories', 'user'));
+        return view('user.account', compact('currentTab', 'bookings', 'rawBookings', 'faqs', 'aboutData', 'partnerData', 'policyContent', 'feedbackCategories', 'user'));
     }
 
     private function getStatusClass($status)
@@ -176,5 +179,27 @@ class AccountController extends Controller
             'success' => true,
             'message' => 'Application submitted successfully! We will contact you within 2 business days.'
         ]);
+    }
+
+    public function downloadInvoice($bookingId)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please login to download invoice');
+        }
+
+        $user = Auth::user();
+        $booking = $user->bookings()->with('package')->findOrFail($bookingId);
+
+        // Check if PDF package is installed
+        if (!class_exists('Barryvdh\DomPDF\Facade\Pdf')) {
+            return back()->with('error', 'PDF package not installed. Please run: composer require barryvdh/laravel-dompdf');
+        }
+
+        // Load PDF library
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('user.invoice', compact('booking'));
+        
+        $invoiceNumber = 'INV-ZB' . str_pad($booking->id, 6, '0', STR_PAD_LEFT);
+        
+        return $pdf->download($invoiceNumber . '.pdf');
     }
 }

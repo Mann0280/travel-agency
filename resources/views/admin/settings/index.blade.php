@@ -43,15 +43,19 @@
                     <button data-tab="notifications" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-bell w-5 mr-3"></i> Notifications
                     </button>
+                    {{-- 
                     <button data-tab="api" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-key w-5 mr-3"></i> API Settings
                     </button>
+                    --}}
                     <button data-tab="email" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-envelope w-5 mr-3"></i> Email Settings
                     </button>
+                    {{-- 
                     <button data-tab="payment" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-credit-card w-5 mr-3"></i> Payment Settings
                     </button>
+                    --}}
                     <button data-tab="social" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-share-alt w-5 mr-3"></i> Social Media
                     </button>
@@ -220,6 +224,8 @@
                     </div>
 
                     <!-- API Settings -->
+                    <!-- API Settings (Hidden) -->
+                    {{-- 
                     <div id="api-tab" class="tab-pane space-y-6 hidden">
                         <div class="card">
                             <h2 class="text-xl font-bold text-[#17320b] mb-6 border-b pb-4">API Configuration</h2>
@@ -243,6 +249,7 @@
                             </div>
                         </div>
                     </div>
+                    --}}
 
                     <!-- Placeholder sections for Email, Payment, Social -->
                     <div id="email-tab" class="tab-pane space-y-6 hidden">
@@ -269,6 +276,7 @@
                         </div>
                     </div>
 
+                    {{-- 
                     <div id="payment-tab" class="tab-pane space-y-6 hidden">
                         <div class="card">
                             <h2 class="text-xl font-bold text-[#17320b] mb-6 border-b pb-4">Payment Settings</h2>
@@ -287,6 +295,7 @@
                             </div>
                         </div>
                     </div>
+                    --}}
 
                     <div id="social-tab" class="tab-pane space-y-6 hidden">
                         <div class="card">

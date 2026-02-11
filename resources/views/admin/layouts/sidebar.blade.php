@@ -12,7 +12,7 @@
                         <i class="fas fa-plane text-white"></i>
                     </div>
                 @endif
-                <h1 class="text-xl font-bold text-white">ZUBEEE Admin</h1>
+                <h1 class="text-xl font-bold text-white">{{ $site_settings->get('site_name', 'ZUBEEE') }} Admin</h1>
             </div>
             <button @click="sidebarOpen = false" class="lg:hidden text-white p-2">
                 <i class="fas fa-times text-xl"></i>
@@ -72,17 +72,37 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.partner-applications.index') }}"
+                    class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.partner-applications.*') ? 'active-menu' : '' }}">
+                    <i class="fas fa-handshake w-6 mr-3"></i>
+                    <span class="text-sm">Partner Applications</span>
+                    @php
+                        $pendingCount = \App\Models\PartnerApplication::pending()->count();
+                    @endphp
+                    @if($pendingCount > 0)
+                        <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pendingCount }}</span>
+                    @endif
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.users.index') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.users.*') ? 'active-menu' : '' }}">
                     <i class="fas fa-users w-6 mr-3"></i>
                     <span class="text-sm">Users</span>
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="{{ route('admin.bookings.index') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.bookings.*') ? 'active-menu' : '' }}">
                     <i class="fas fa-calendar-check w-6 mr-3"></i>
                     <span class="text-sm">Bookings</span>
+                </a>
+            </li> --}}
+            <li>
+                <a href="{{ route('admin.analytics.clicks') }}"
+                    class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.analytics.*') ? 'active-menu' : '' }}">
+                    <i class="fas fa-chart-line w-6 mr-3"></i>
+                    <span class="text-sm">Click Analytics</span>
                 </a>
             </li>
             <li>

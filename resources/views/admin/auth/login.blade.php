@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personnel Authentication - ZUBEEE ADMIN</title>
+    <title>Personnel Authentication - {{ $site_settings->get('site_name', 'ZUBEEE') }} ADMIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,10 +43,14 @@
                     </svg>
                 </div>
                 <div class="relative z-10">
-                    <div class="w-16 h-16 bg-white rounded-2xl rotate-12 flex items-center justify-center mx-auto mb-6 shadow-xl">
-                        <i class="fas fa-compass text-forest text-3xl -rotate-12"></i>
+                    <div class="w-16 h-16 bg-white rounded-2xl rotate-12 flex items-center justify-center mx-auto mb-6 shadow-xl overflow-hidden">
+                        @if($site_settings->get('site_logo'))
+                            <img src="{{ asset($site_settings->get('site_logo')) }}" class="w-full h-full object-contain -rotate-12" alt="Logo">
+                        @else
+                            <i class="fas fa-compass text-forest text-3xl -rotate-12"></i>
+                        @endif
                     </div>
-                    <h1 class="text-3xl font-black text-white font-poppins tracking-tighter uppercase mb-2">Zubeee Admin</h1>
+                    <h1 class="text-3xl font-black text-white font-poppins tracking-tighter uppercase mb-2">{{ $site_settings->get('site_name', 'ZUBEEE') }} Admin</h1>
                     <p class="text-[10px] font-black text-gold uppercase tracking-[0.3em]">Institutional Access Portal</p>
                 </div>
             </div>
@@ -111,7 +115,7 @@
             </div>
         </div>
         
-        <p class="text-center mt-8 text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">© 2026 Zubeee Travel Systems</p>
+        <p class="text-center mt-8 text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">© {{ date('Y') }} {{ $site_settings->get('site_name', 'ZUBEEE') }} Travel Systems</p>
     </div>
 </body>
 </html>

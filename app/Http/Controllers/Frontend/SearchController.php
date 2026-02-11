@@ -18,8 +18,16 @@ class SearchController extends Controller
                         ->approved();
 
         // 2. Fetch metadata for dynamic search UI from all approved packages
-        $allPackages = Package::approved()->get();
-        $uniqueDepartureCities = $allPackages->flatMap(fn($p) => $p->departure_cities ?? [])->unique()->values()->all();
+        $dbFromCities = Package::approved()->whereNotNull('from_city')->pluck('from_city')->unique()->toArray();
+        $dbDepartureCitiesArray = Package::approved()->get()->flatMap(function($p) {
+            // Handle both Model and stdClass
+            $cities = $p->departure_cities ?? [];
+            if (is_string($cities)) {
+                $cities = json_decode($cities, true) ?? [];
+            }
+            return is_array($cities) ? $cities : [];
+        })->unique()->toArray();
+        $uniqueDepartureCities = collect(array_merge($dbFromCities, $dbDepartureCitiesArray))->unique()->values()->all();
         sort($uniqueDepartureCities);
 
         $validDestinations = Destination::whereHas('packages', fn($q) => $q->approved())->pluck('name')->unique()->values()->all();
@@ -37,8 +45,10 @@ class SearchController extends Controller
 
         // From Filter (Departure City)
         if ($fromFilter) {
-            // Using JSON contains for array column
-            $query->whereJsonContains('departure_cities', $fromFilter);
+            $query->where(function($q) use ($fromFilter) {
+                $q->where('from_city', $fromFilter)
+                  ->orWhereJsonContains('departure_cities', $fromFilter);
+            });
         }
 
         // To Filter (Destination)
@@ -100,10 +110,20 @@ class SearchController extends Controller
             
             if ($durationFilter) {
                 // Parse duration string "X days" or just "X"
-                $days = (int) $package->duration; 
-                // If it's 0, try regex
-                if ($days === 0 && preg_match('/(\d+)/', $package->duration, $m)) {
+                $days = 0;
+                
+                // Try to find "D" or "Days" explicitly first (e.g. "6N/7D", "5 Days")
+                if (preg_match('/(\d+)\s*(?:D|d|Day|day)/', $package->duration, $m)) {
                     $days = (int)$m[1];
+                } 
+                // Fallback: just take the first number found (e.g. "5", "5 Nights")
+                elseif (preg_match('/(\d+)/', $package->duration, $m)) {
+                    $days = (int)$m[1];
+                }
+                
+                // If simple cast works better (e.g. "5")
+                if ($days === 0) {
+                    $days = (int) $package->duration;
                 }
 
                 if ($durationFilter === 'custom' && $customDurationFilter) {

@@ -4,8 +4,8 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- Company Info -->
             <div>
-                <h3 class="text-xl font-bold mb-4">{{ $site_settings->get('site_name') ?? 'ZUBEE' }}</h3>
-                <p class="text-gray-200 mb-4">Your trusted partner for unforgettable travel experiences. Explore the world with our curated packages.</p>
+                <h3 class="text-xl font-bold mb-4">{{ $site_settings->get('site_name') ?? 'ZUBEEE' }}</h3>
+                <p class="text-gray-200 mb-4">{{ $site_settings->get('meta_description') ?? 'Your trusted partner for unforgettable travel experiences. Explore the world with our curated packages.' }}</p>
                 <div class="flex space-x-4">
                     <a href="{{ $site_settings->get('facebook_url', '#') }}" class="text-gray-200 hover:text-white">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -78,14 +78,14 @@
                         <svg class="w-5 h-5 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
-                        <span>{{ $site_settings->get('email') ?? 'info@zubeee-travels.com' }}</span>
+                        <span>{{ $site_settings->get('contact_email') ?? 'info@zubeee-travels.com' }}</span>
                     </li>
                 </ul>
             </div>
         </div>
         
         <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; {{ date('Y') }} {{ $site_settings->get('site_name') ?? 'ZUBEE' }} Tours & Travels. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} {{ $site_settings->get('site_name') ?? 'ZUBEEE' }} Tours & Travels. All rights reserved.</p>
         </div>
     </div>
 </footer>

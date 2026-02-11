@@ -10,37 +10,9 @@
         <button @click="sidebarOpen = true" class="text-white p-2">
             <i class="fas fa-bars text-xl"></i>
         </button>
-        <h1 class="text-lg font-bold text-white ml-2">ZUBEEE Admin</h1>
+        <h1 class="text-lg font-bold text-white ml-2">{{ $site_settings->get('site_name', 'ZUBEEE') }} Admin</h1>
     </div>
     <div class="flex items-center space-x-2">
-        <!-- Mobile Notifications -->
-        <div class="relative" x-data="{ open: false }">
-            <button @click="open = !open" class="text-white relative p-2">
-                <i class="fas fa-bell text-lg"></i>
-                @if($pendingBookingsCount > 0)
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-5 w-5 flex items-center justify-center border-2 border-[#17320b]">
-                        {{ $pendingBookingsCount }}
-                    </span>
-                @endif
-            </button>
-            <!-- Mobile Notif Dropdown -->
-            <div x-show="open" @click.away="open = false" 
-                 class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-50 overflow-hidden">
-                <div class="p-3 border-b bg-gray-50">
-                    <h3 class="font-bold text-sm">Notifications</h3>
-                </div>
-                <div class="max-h-60 overflow-y-auto">
-                    @forelse($recentPendingBookings as $booking)
-                        <a href="{{ route('admin.bookings.index') }}" class="block p-3 border-b hover:bg-gray-50 text-xs">
-                            <p class="font-semibold">New booking request</p>
-                            <p class="text-gray-500">{{ $booking->created_at->diffForHumans() }}</p>
-                        </a>
-                    @empty
-                        <div class="p-4 text-center text-gray-400 text-xs">No notifications</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
 
         <!-- Mobile Admin Menu -->
         <div class="relative" x-data="{ open: false }">
@@ -80,43 +52,6 @@
             <p class="text-gray-600 text-sm">Welcome back, {{ $user->name }}</p>
         </div>
         <div class="flex items-center space-x-6">
-            <!-- Notifications -->
-            <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open" class="text-gray-600 hover:text-[#17320b] relative transition-colors">
-                    <i class="fas fa-bell text-xl"></i>
-                    @if($pendingBookingsCount > 0)
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full h-5 w-5 flex items-center justify-center border-2 border-white font-bold">
-                            {{ $pendingBookingsCount }}
-                        </span>
-                    @endif
-                </button>
-                <div x-show="open" @click.away="open = false"
-                    class="absolute right-0 mt-4 w-80 bg-white rounded-xl shadow-xl z-50 overflow-hidden border border-gray-100">
-                    <div class="p-4 border-b bg-gray-50">
-                        <h3 class="font-bold text-[#17320b]">Notifications</h3>
-                    </div>
-                    <div class="max-h-80 overflow-y-auto">
-                        @forelse($recentPendingBookings as $booking)
-                            <a href="{{ route('admin.bookings.index') }}" class="block p-4 border-b hover:bg-gray-50 transition-colors">
-                                <p class="font-semibold text-sm text-gray-800">New booking received</p>
-                                <p class="text-xs text-gray-500 mt-1">{{ $booking->created_at->diffForHumans() }}</p>
-                            </a>
-                        @empty
-                            <div class="p-8 text-center text-gray-400">
-                                <i class="fas fa-bell-slash text-2xl mb-2 opacity-50"></i>
-                                <p class="text-sm font-medium">No pending notifications</p>
-                            </div>
-                        @endforelse
-                    </div>
-                    @if($pendingBookingsCount > 0)
-                        <div class="p-3 border-t text-center">
-                            <a href="{{ route('admin.bookings.index') }}" class="text-[#a8894d] text-sm font-bold hover:underline">
-                                View all bookings
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
 
             <!-- Admin Menu (Desktop) -->
             <div class="relative" x-data="{ open: false }">

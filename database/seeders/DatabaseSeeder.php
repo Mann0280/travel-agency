@@ -29,23 +29,15 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Create agency user
-        $agencyUser = User::create([
-            'name' => 'ZUBEEE Tours',
-            'email' => 'agency@zubee.com',
-            'password' => Hash::make('password'),
-            'role' => 'agency',
-        ]);
-
         // Create agency
         $agency = Agency::create([
             'name' => 'ZUBEEE Tours',
             'description' => 'Your trusted travel partner',
             'email' => 'agency@zubee.com',
+            'password' => Hash::make('password'),
             'phone' => '+91-9876543210',
             'address' => 'Ahmedabad, Gujarat',
             'is_verified' => true,
-            'user_id' => $agencyUser->id,
         ]);
 
         // Create destinations

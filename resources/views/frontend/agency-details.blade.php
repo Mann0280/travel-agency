@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', ($selectedPackage ? $selectedPackage->name . ' - ' . $selectedAgency->name : 'Package Details') . ' - ZUBEE')
+@section('title', ($selectedPackage ? $selectedPackage->name . ' - ' . $selectedAgency->name : 'Package Details') . ' - ' . ($site_settings->get('site_name') ?? 'ZUBEEE'))
 
 @push('styles')
 <!-- Font Awesome -->

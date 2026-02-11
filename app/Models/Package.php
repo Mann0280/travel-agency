@@ -18,6 +18,7 @@ class Package extends Model
         'description',
         'price',
         'duration',
+        'from_city',
         'departure_cities',
         'is_featured',
         'destination_id',

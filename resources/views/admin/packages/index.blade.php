@@ -64,7 +64,7 @@
         </div>
         <div class="flex items-center space-x-3">
             <div class="relative">
-                <input type="text" id="tabulator-search" placeholder="Search packages..." 
+                <input type="text" id="tabulator-search" placeholder="Search packages..." value="{{ request('search') }}"
                     class="w-full md:w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold transition-all duration-200 text-sm">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
@@ -80,23 +80,23 @@
             <span class="text-xs font-bold text-gray-400 uppercase">Category:</span>
             <select id="filter-category" class="text-sm border-gray-200 rounded-lg focus:ring-gold focus:border-gold">
                 <option value="">All Categories</option>
-                <option value="adventure">Adventure</option>
-                <option value="hill-station">Hill Station</option>
-                <option value="cultural">Cultural</option>
-                <option value="beach">Beach</option>
-                <option value="desert">Desert</option>
-                <option value="nature">Nature</option>
-                <option value="trekking">Trekking</option>
-                <option value="heritage">Heritage</option>
-                <option value="religious">Religious</option>
+                <option value="adventure" {{ request('category') == 'adventure' ? 'selected' : '' }}>Adventure</option>
+                <option value="hill-station" {{ request('category') == 'hill-station' ? 'selected' : '' }}>Hill Station</option>
+                <option value="cultural" {{ request('category') == 'cultural' ? 'selected' : '' }}>Cultural</option>
+                <option value="beach" {{ request('category') == 'beach' ? 'selected' : '' }}>Beach</option>
+                <option value="desert" {{ request('category') == 'desert' ? 'selected' : '' }}>Desert</option>
+                <option value="nature" {{ request('category') == 'nature' ? 'selected' : '' }}>Nature</option>
+                <option value="trekking" {{ request('category') == 'trekking' ? 'selected' : '' }}>Trekking</option>
+                <option value="heritage" {{ request('category') == 'heritage' ? 'selected' : '' }}>Heritage</option>
+                <option value="religious" {{ request('category') == 'religious' ? 'selected' : '' }}>Religious</option>
             </select>
         </div>
         <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-gray-400 uppercase">Status:</span>
             <select id="filter-status" class="text-sm border-gray-200 rounded-lg focus:ring-gold focus:border-gold">
                 <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
             </select>
         </div>
         <button id="reset-filters" class="text-xs font-bold text-gray-500 hover:text-gold transition-colors flex items-center gap-1 ml-auto">
@@ -224,4 +224,55 @@
         @endif
     </div>
 </div>
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterCategory = document.getElementById('filter-category');
+        const filterStatus = document.getElementById('filter-status');
+        const searchInput = document.getElementById('tabulator-search');
+        const resetBtn = document.getElementById('reset-filters');
+
+        function applyFilters() {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (filterCategory.value) {
+                params.set('category', filterCategory.value);
+            } else {
+                params.delete('category');
+            }
+
+            if (filterStatus.value) {
+                params.set('status', filterStatus.value);
+            } else {
+                params.delete('status');
+            }
+
+            if (searchInput.value) {
+                params.set('search', searchInput.value);
+            } else {
+                params.delete('search');
+            }
+
+            // Reset to page 1 when filtering
+            params.delete('page');
+
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
+        }
+
+        filterCategory.addEventListener('change', applyFilters);
+        filterStatus.addEventListener('change', applyFilters);
+        
+        // Debounce search
+        let timeout = null;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(applyFilters, 500);
+        });
+
+        resetBtn.addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    });
+</script>
+@endpush
 @endsection

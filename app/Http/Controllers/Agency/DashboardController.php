@@ -21,27 +21,43 @@ class DashboardController extends AgencyBaseController
         
         $stats = [
             'total_packages' => Package::where('agency_id', $agency->id)->count(),
-            'total_bookings' => Booking::whereHas('package', function($query) use ($agency) {
-                $query->where('agency_id', $agency->id);
-            })->count(),
-            'pending_bookings' => Booking::where('status', 'pending')
-                ->whereHas('package', function($query) use ($agency) {
-                    $query->where('agency_id', $agency->id);
-                })->count(),
             'total_revenue' => Booking::where('status', 'confirmed')
                 ->whereHas('package', function($query) use ($agency) {
                     $query->where('agency_id', $agency->id);
                 })->sum('total_amount'),
+            'total_clicks' => Booking::whereHas('package', function($query) use ($agency) {
+                    $query->where('agency_id', $agency->id);
+                })->sum('button_clicks'),
+            'whatsapp_clicks' => Booking::whereHas('package', function($query) use ($agency) {
+                    $query->where('agency_id', $agency->id);
+                })->sum('whatsapp_clicks'),
+            'call_clicks' => Booking::whereHas('package', function($query) use ($agency) {
+                    $query->where('agency_id', $agency->id);
+                })->sum('call_clicks'),
         ];
 
-        $recentBookings = Booking::with(['package', 'user'])
-            ->whereHas('package', function($query) use ($agency) {
+        // Calculate monthly revenue for the current year
+        // Calculate monthly revenue for the current year
+        $monthlyRevenue = Booking::whereHas('package', function($query) use ($agency) {
                 $query->where('agency_id', $agency->id);
             })
-            ->latest()
-            ->take(5)
-            ->get();
+            ->where('status', 'confirmed')
+            ->whereYear('created_at', date('Y'))
+            ->get()
+            ->groupBy(function($booking) {
+                return $booking->created_at->format('n'); // 1-12
+            })
+            ->map(function($bookings) {
+                return $bookings->sum('total_amount');
+            })
+            ->toArray();
 
-        return view('agency.dashboard', compact('agency', 'stats', 'recentBookings'));
+        // Fill in missing months with 0
+        $chartData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $chartData[] = $monthlyRevenue[$i] ?? 0;
+        }
+
+        return view('agency.dashboard', compact('agency', 'stats', 'chartData'));
     }
 }

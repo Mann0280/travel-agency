@@ -87,4 +87,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class);
     }
+
+    /**
+     * Get the user's partner application.
+     */
+    public function partnerApplication()
+    {
+        return $this->hasOne(PartnerApplication::class);
+    }
+
+    /**
+     * Get the agency associated with the user.
+     */
+    public function agency()
+    {
+        return $this->belongsTo(Agency::class);
+    }
+
+    /**
+     * Check if user has a pending partner application.
+     */
+    public function hasPendingApplication()
+    {
+        return $this->partnerApplication()->where('status', 'pending')->exists();
+    }
 }

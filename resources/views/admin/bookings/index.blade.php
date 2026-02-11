@@ -4,6 +4,24 @@
 @section('page_title', 'Bookings Management')
 
 @section('content')
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                    The Bookings module is currently disabled.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    {{-- Content Hidden --}}
+    <!-- <style> ... </style> ... -->
+    <!-- The rest of the content is hidden -->
+@endsection
+{{--
 <style>
     /* Exact CSS matching from original PHP */
     .card {
@@ -83,7 +101,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Stats Cards (Hidden as per request) -->
+    {{-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="card">
             <p class="text-2xl font-bold text-[#17320b]">{{ $stats['total'] }}</p>
             <p class="text-gray-600">Total Clicks</p>
@@ -100,7 +119,7 @@
             <p class="text-2xl font-bold text-[#17320b]">{{ $stats['pending'] }}</p>
             <p class="text-gray-600">Pending</p> -->
         </div>
-    </div>
+    </div> --}}
 
     <!-- Filter Bar -->
     <div class="bg-gray-50 p-4 rounded-lg">
@@ -303,7 +322,8 @@
     </div>
 </div>
 
-@endsection
+</div>
+
 
 @push('scripts')
 <script>

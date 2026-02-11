@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agency Login | ZUBEEE Partner</title>
+    <title>Agency Login | {{ $site_settings->get('site_name', 'ZUBEEE') }} Partner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,10 +35,14 @@
     <div class="max-w-md w-full">
         <!-- Logo/Branding -->
         <div class="text-center mb-10">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-forest text-gold text-3xl shadow-2xl mb-6">
-                <i class="fas fa-briefcase"></i>
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-forest text-gold text-3xl shadow-2xl mb-6 overflow-hidden">
+                @if($site_settings->get('site_logo'))
+                    <img src="{{ asset($site_settings->get('site_logo')) }}" alt="Logo" class="w-full h-full object-cover">
+                @else
+                    <i class="fas fa-briefcase"></i>
+                @endif
             </div>
-            <h1 class="text-3xl font-black text-forest-dark uppercase tracking-tighter">ZUBEEE <span class="text-gold">Partner</span></h1>
+            <h1 class="text-3xl font-black text-forest-dark uppercase tracking-tighter">{{ $site_settings->get('site_name', 'ZUBEEE') }} <span class="text-gold">Partner</span></h1>
             <p class="text-slate text-sm font-medium mt-2">Travel Agency Management Portal</p>
         </div>
 

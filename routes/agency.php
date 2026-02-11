@@ -23,5 +23,8 @@ Route::prefix('agency-panel')->name('agency.')->group(function () {
         // Profile Management
         Route::get('profile', [Agency\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [Agency\ProfileController::class, 'update'])->name('profile.update');
+
+        // Analytics
+        Route::get('analytics/clicks', [Agency\ClickAnalyticsController::class, 'index'])->name('analytics.clicks');
     });
 });

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'ZUBEEE Agency Panel')</title>
+    <title>@yield('title', $site_settings->get('site_name', 'ZUBEEE') . ' Agency Panel')</title>
     
     <!-- Google Fonts: Poppins & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,10 +16,10 @@
             theme: {
                 extend: {
                     colors: {
-                        'forest': '#1a3a1a',
+                        'forest': 'var(--primary-color)',
                         'forest-light': '#2a4a2a',
                         'forest-dark': '#0a2a0a',
-                        'gold': '#dbb363',
+                        'gold': 'var(--secondary-color)',
                         'champagne': '#fdfbf7',
                         'slate': '#57688a',
                         'admin-black': '#0f172a',
@@ -36,228 +36,293 @@
     
     <style>
         :root {
-            --forest: #1a3a1a;
-            --forest-light: #2a4a2a;
-            --forest-dark: #0a2a0a;
-            --gold: #dbb363;
-            --champagne: #fdfbf7;
-            --slate: #57688a;
-            --admin-black: #0f172a;
-            --admin-gray: #1e293b;
+            --primary-color: {{ $site_settings->get('primary_color') ?? '#17320b' }};
+            --secondary-color: {{ $site_settings->get('secondary_color') ?? '#dbb363' }};
         }
-        
+    </style>
+    
+    <style>
+        /* Fixed layout structure */
+        html,
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--champagne) 0%, #ffffff 100%);
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc; /* Admin Content bg */
         }
-        
-        /* Responsive Sidebar */
+
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fixed sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            /* Background color moved to inline style in sidebar.blade.php to support #17320B */
+            z-index: 50;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Main content wrapper */
+        .content-wrapper {
+            flex: 1;
+            margin-left: 250px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fixed desktop header */
+        .desktop-header-fixed {
+            position: sticky;
+            top: 0;
+            left: 250px;
+            right: 0;
+            z-index: 40;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Scrollable content area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Mobile specific styles */
         @media (max-width: 1024px) {
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
+                width: 280px;
+                z-index: 60;
             }
-            
+
             .sidebar.open {
                 transform: translateX(0);
             }
-            
-            .main-content {
-                margin-left: 0 !important;
+
+            .content-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-sidebar-open .content-wrapper {
+                filter: brightness(0.7);
+                pointer-events: none;
+            }
+
+            /* Fixed mobile header */
+            .mobile-header {
+                position: sticky;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 50;
+                height: 60px;
+                background: #17320b;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
         }
-        
-        /* Luxury Gradient Backgrounds */
-        .gradient-forest {
-            background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
-        }
-        
-        .gradient-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, #c9a353 100%);
-        }
-        
-        /* Premium Shadow Effects */
-        .shadow-luxury {
-            box-shadow: 0 20px 60px -15px rgba(58, 109, 44, 0.3);
-        }
-        
-        .shadow-soft {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        
-        /* Smooth Animations */
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px);
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-fade-in-up {
-            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        /* Card Styles - Travel Themed */
-        .card {
-            background: white;
-            border-radius: 20px;
-            border: 1px solid rgba(58, 109, 44, 0.1);
-            padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        @media (min-width: 768px) {
-            .card {
-                padding: 2rem;
-            }
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--forest) 0%, var(--gold) 100%);
-            transform: scaleX(0);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(58, 109, 44, 0.15);
-        }
-        
-        /* Premium Button Styles */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
+
+        /* Active menu styling */
+        .active-menu {
+            background-color: rgba(168, 137, 77, 0.2);
+            border-left: 3px solid #a8894d;
             color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 12px 28px;
-            border-radius: 12px;
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(168, 137, 77, 0.5);
+            border-radius: 3px;
+        }
+
+        /* Forms & Buttons Utility Classes */
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151; /* gray-700 */
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #1f2937; /* gray-800 */
+            background-color: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(168, 137, 77, 0.2); /* Gold ring */
+        }
+
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 8px 20px rgba(58, 109, 44, 0.3);
-            border: none;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid transparent;
         }
-        
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(58, 109, 44, 0.4);
+            background-color: #9d7c4f;
+            border-color: #9d7c4f;
         }
-        
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+
+        .btn-secondary {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(58, 109, 44, 0.05);
-            border-radius: 10px;
+
+        .btn-secondary:hover {
+            background-color: #0f2407;
+            border-color: #0f2407;
         }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--forest-light), var(--forest));
-            border-radius: 10px;
+
+        .btn-outline {
+            background-color: transparent;
+            color: #4b5563; /* gray-600 */
+            border-color: #d1d5db; /* gray-300 */
         }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: var(--forest-dark);
+
+        .btn-outline:hover {
+            background-color: #f3f4f6; /* gray-50 */
+            color: #1f2937; /* gray-800 */
         }
-        
-        /* Mobile Overlay */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 40;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+
+        .btn-danger {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #ef4444;
         }
-        
-        .sidebar-overlay.active {
-            display: block;
-            opacity: 1;
+
+        .btn-danger:hover {
+            background-color: #dc2626; /* red-600 */
+            border-color: #dc2626;
         }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem; /* Slightly more rounded */
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f3f4f6; /* gray-100 */
+        }
+
+        /* Text Colors Utility */
+        .text-forest { color: var(--primary-color) !important; }
+        .text-gold { color: var(--secondary-color) !important; }
+        .bg-forest { background-color: var(--primary-color) !important; }
+        .bg-gold { background-color: var(--secondary-color) !important; }
     </style>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Alpine JS -->
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    
     @stack('styles')
 </head>
-<body class="bg-gradient-to-br from-champagne via-white to-champagne">
-    <!-- Mobile Overlay -->
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    
-    <!-- Sidebar -->
-    @include('agency.layouts.sidebar')
-    
-    <!-- Main Content -->
-    <div class="main-content lg:ml-64 min-h-screen flex flex-col">
-        <!-- Header -->
-        @include('agency.layouts.header')
+<body class="bg-[#f8fafc]">
+    <div class="admin-layout" x-data="{ sidebarOpen: false }" :class="{ 'mobile-sidebar-open': sidebarOpen }">
+        <!-- Mobile Overlay -->
+        <div x-show="sidebarOpen" 
+             @click="sidebarOpen = false"
+             class="fixed inset-0 bg-black/50 z-[55] lg:hidden"
+             x-transition:enter="transition opacity ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition opacity ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"></div>
         
-        <!-- Content -->
-        <main class="p-4 md:p-8 flex-1">
-            <div class="animate-fade-in-up">
-                @if(session('success'))
-                    <div class="bg-forest/10 border-l-4 border-forest p-4 mb-8">
-                        <p class="text-forest font-bold">{{ session('success') }}</p>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="bg-red-500/10 border-l-4 border-red-500 p-4 mb-8">
-                        <p class="text-red-600 font-bold">{{ session('error') }}</p>
-                    </div>
-                @endif
-                @yield('content')
+        <!-- Sidebar -->
+        @include('agency.layouts.sidebar')
+        
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Header -->
+            @include('agency.layouts.header')
+            
+            <!-- Scrollable Content Area -->
+            <div class="content-area">
+                <main class="p-4 md:p-8">
+                     @if(session('success'))
+                        <div class="bg-forest/10 border-l-4 border-forest p-4 mb-8">
+                            <p class="text-forest font-bold">{{ session('success') }}</p>
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="bg-red-500/10 border-l-4 border-red-500 p-4 mb-8">
+                            <p class="text-red-600 font-bold">{{ session('error') }}</p>
+                        </div>
+                    @endif
+                    
+                    @yield('content')
+                </main>
             </div>
-        </main>
+        </div>
     </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById('agencySidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('agencySidebar');
-            const menuBtn = document.getElementById('mobileMenuBtn');
-            
-            if (window.innerWidth < 1024) {
-                if (sidebar && !sidebar.contains(event.target) && menuBtn && !menuBtn.contains(event.target) && sidebar.classList.contains('open')) {
-                    toggleSidebar();
-                }
+            // Check if Alpine is available and managing the state
+            const layout = document.querySelector('.admin-layout');
+            if (layout && layout.__x) {
+               layout.__x.$data.sidebarOpen = !layout.__x.$data.sidebarOpen;
             }
-        });
+        }
     </script>
     
     @stack('scripts')

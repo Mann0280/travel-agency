@@ -23,8 +23,9 @@ class PackageController extends AgencyBaseController
 
     public function create()
     {
+        $agency = $this->getActiveAgency();
         $destinations = Destination::all();
-        return view('agency.packages.create', compact('destinations'));
+        return view('agency.packages.create', compact('destinations', 'agency'));
     }
 
     public function store(Request $request)
@@ -36,20 +37,31 @@ class PackageController extends AgencyBaseController
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'price' => 'required|numeric|min:0',
             'duration' => 'required|string|max:255',
+            'duration_days' => 'required|integer|min:1',
+            'from_city' => 'nullable|string|max:255',
+            'location' => 'required|string|max:255',
             'departure_cities' => 'required|array',
-            'travel_date' => 'required|date',
-            'is_featured' => 'boolean',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'category' => 'required|string',
+            'status' => 'required|in:active,inactive',
             'destination_id' => 'required|exists:destinations,id',
             'itinerary' => 'nullable|array',
             'inclusions' => 'nullable|array',
             'exclusions' => 'nullable|array',
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
+            'available_months' => 'nullable|array',
+            'branches' => 'nullable|array',
+            'contact_info' => 'nullable|array',
         ]);
 
         $data['agency_id'] = $agency->id;
-        $data['is_featured'] = $request->boolean('is_featured');
+        $data['is_featured'] = $request->has('featured') && $request->featured == '1';
         $data['is_approved'] = true; // Automatically approved as per user request
+        
+        // Map travel_date to start_date as it's required by DB but missing in form
+        $data['travel_date'] = $data['start_date'];
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('packages', 'public');
@@ -67,7 +79,7 @@ class PackageController extends AgencyBaseController
             abort(403);
         }
         $destinations = Destination::all();
-        return view('agency.packages.edit', compact('package', 'destinations'));
+        return view('agency.packages.edit', compact('package', 'destinations', 'agency'));
     }
 
     public function update(Request $request, Package $package)
@@ -83,19 +95,30 @@ class PackageController extends AgencyBaseController
             'image_upload' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'price' => 'required|numeric|min:0',
             'duration' => 'required|string|max:255',
+            'duration_days' => 'required|integer|min:1',
+            'from_city' => 'nullable|string|max:255',
+            'location' => 'required|string|max:255',
             'departure_cities' => 'required|array',
-            'travel_date' => 'required|date',
-            'is_featured' => 'boolean',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'category' => 'required|string',
+            'status' => 'required|in:active,inactive',
             'destination_id' => 'required|exists:destinations,id',
             'itinerary' => 'nullable|array',
             'inclusions' => 'nullable|array',
             'exclusions' => 'nullable|array',
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
+            'available_months' => 'nullable|array',
+            'branches' => 'nullable|array',
+            'contact_info' => 'nullable|array',
         ]);
 
-        $data['is_featured'] = $request->boolean('is_featured');
+        $data['is_featured'] = $request->has('featured') && $request->featured == '1';
         $data['is_approved'] = true; // Automatically approved as per user request
+        
+        // Map travel_date to start_date
+        $data['travel_date'] = $data['start_date'];
 
         if ($request->hasFile('image_upload')) {
             if ($package->image) {

@@ -58,6 +58,20 @@ class RegisterController extends Controller
         // Log the user in
         Auth::login($user);
 
+        // Send notification to admin if enabled
+        try {
+            if (\App\Models\Setting::get('notif_user_reg')) {
+                // Find admin users (assuming role 'admin')
+                $admins = User::where('role', 'admin')->get();
+                foreach ($admins as $admin) {
+                     $admin->notify(new \App\Notifications\UserRegistrationNotification($user));
+                }
+            }
+        } catch (\Exception $e) {
+            // Log error but don't fail registration
+            \Log::error('Registration Notification Error: ' . $e->getMessage());
+        }
+
         // Redirect to home page with success message
         return redirect()->route('home')->with('success', 'Account created successfully! Welcome to ZUBEEE.');
     }

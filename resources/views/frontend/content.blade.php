@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', $title . ' - ZUBEE')
+@section('title', $title . ' - ' . ($site_settings->get('site_name') ?? 'ZUBEEE'))
 
 @section('content')
 <div class="bg-champagne min-h-screen">

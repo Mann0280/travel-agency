@@ -109,4 +109,75 @@ class PackageDetailsController extends Controller
             'whatsappMessage'
         ));
     }
+
+    public function trackButtonClick(Request $request)
+    {
+        $validated = $request->validate([
+            'package_id' => 'required|exists:packages,id',
+            'button_type' => 'required|in:whatsapp,call'
+        ]);
+
+        // Get user ID or null for guests
+        $userId = auth()->check() ? auth()->id() : null;
+
+        // Find or create a booking record for this package and user/guest
+        $booking = \App\Models\Booking::firstOrCreate(
+            [
+                'package_id' => $validated['package_id'],
+                'user_id' => $userId,
+                'booking_source' => 'button_click', // Special source for click tracking
+            ],
+            [
+                'travel_date' => now()->addDays(7),
+                'number_of_travelers' => 1,
+                'total_amount' => 0,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'button_clicks' => 0,
+                'whatsapp_clicks' => 0,
+                'call_clicks' => 0,
+            ]
+        );
+
+        // Increment the appropriate counter
+        if ($validated['button_type'] === 'whatsapp') {
+            $booking->increment('whatsapp_clicks');
+        } else {
+            $booking->increment('call_clicks');
+        }
+        
+        // Also increment total button clicks
+        $booking->increment('button_clicks');
+
+        // Send notification if it was a new booking (first click)
+        if ($booking->wasRecentlyCreated) {
+            try {
+                // 1. Notify Admin if enabled
+                if (\App\Models\Setting::get('notif_new_booking')) {
+                    $admins = \App\Models\User::where('role', 'admin')->get();
+                    foreach ($admins as $admin) {
+                        $admin->notify(new \App\Notifications\NewBookingNotification($booking));
+                    }
+                }
+
+                // 2. Notify Agency (Owner of the package)
+                // Agency model is Notifiable
+                if ($booking->package && $booking->package->agency) {
+                     $booking->package->agency->notify(new \App\Notifications\NewBookingNotification($booking));
+                }
+            } catch (\Exception $e) {
+                \Log::error('Booking Notification Error: ' . $e->getMessage());
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Click tracked successfully',
+            'data' => [
+                'whatsapp_clicks' => $booking->whatsapp_clicks,
+                'call_clicks' => $booking->call_clicks,
+                'total_clicks' => $booking->button_clicks,
+            ]
+        ]);
+    }
 }

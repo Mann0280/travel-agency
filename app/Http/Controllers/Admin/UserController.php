@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,8 +17,8 @@ class UserController extends Controller
         // Calculate stats
         $totalUsers = $users->count();
         $activeUsers = $users->where('status', 'active')->count();
-        $totalBookings = 0; // Will be calculated when bookings exist
-        $totalRevenue = 0; // Will be calculated when bookings exist
+        $totalBookings = Booking::count();
+        $totalRevenue = Booking::where('status', 'confirmed')->sum('total_amount');
         
         return view('admin.users.index', compact('users', 'totalUsers', 'activeUsers', 'totalBookings', 'totalRevenue'));
     }
@@ -85,8 +86,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $bookingsCount = 0; // Will be calculated when bookings exist
-        $totalSpent = 0; // Will be calculated when bookings exist
+        $bookingsCount = $user->bookings()->count();
+        $totalSpent = $user->bookings()->where('status', 'confirmed')->sum('total_amount');
         $wishlistCount = 0; // Will be calculated when wishlist exists
         
         return view('admin.users.edit', compact('user', 'bookingsCount', 'totalSpent', 'wishlistCount'));

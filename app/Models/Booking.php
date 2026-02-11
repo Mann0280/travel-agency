@@ -22,6 +22,9 @@ class Booking extends Model
         'travellers',
         'user_id',
         'package_id',
+        'button_clicks',
+        'whatsapp_clicks',
+        'call_clicks',
     ];
 
     protected $casts = [

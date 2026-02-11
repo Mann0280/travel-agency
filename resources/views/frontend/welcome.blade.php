@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'ZUBEEE - Curated Luxury Voyages')
+@section('title', ($site_settings->get('site_name') ?? 'ZUBEEE') . ' - Curated Luxury Voyages')
 
 @section('content')
 <div class="relative min-h-screen">

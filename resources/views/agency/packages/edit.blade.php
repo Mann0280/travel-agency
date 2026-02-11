@@ -3,271 +3,429 @@
 @section('title', 'Edit Package')
 
 @section('content')
-<div class="space-y-6">
-    <div class="flex justify-between items-center">
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 pb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Edit Package</h1>
-            <p class="text-gray-600">Update package information</p>
+             <div class="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                <a href="{{ route('agency.dashboard') }}" class="hover:text-forest transition-colors">Dashboard</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <a href="{{ route('agency.packages.index') }}" class="hover:text-forest transition-colors">My Packages</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-gray-800 font-medium">Edit</span>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ $package->name }}</h1>
+            <p class="text-gray-500 mt-1">Update your package details and itinerary</p>
         </div>
-        <a href="{{ route('agency.packages.index') }}" class="btn btn-outline">
-            <i class="fas fa-arrow-left mr-2"></i> Back to List
-        </a>
+        <div class="flex gap-3">
+            <a href="{{ route('agency.packages.index') }}" class="btn btn-outline bg-white hover:bg-gray-50 border-gray-300 text-gray-700">
+                <i class="fas fa-arrow-left mr-2"></i> Cancel
+            </a>
+            <button type="submit" form="packageForm" class="btn btn-primary shadow-lg shadow-gold/20 hover:shadow-gold/40 transition-all transform hover:-translate-y-0.5">
+                <i class="fas fa-save mr-2"></i> Save Changes
+            </button>
+        </div>
     </div>
 
-    <div class="card">
-        <form action="{{ route('agency.packages.update', $package) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf
-            @method('PUT')
-            
-            <!-- Basic Information -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Basic Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="form-label">Package Name *</label>
-                        <input type="text" name="name" class="form-input" required value="{{ old('name', $package->name) }}">
+    <form id="packageForm" action="{{ route('agency.packages.update', $package) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        
+         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Main Content (8/12) -->
+            <div class="lg:col-span-8 space-y-8">
+                
+                <!-- Basic Information -->
+                <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                    <div class="border-b border-gray-100 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                             <span class="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center text-forest text-sm">
+                                <i class="fas fa-info"></i>
+                            </span>
+                            Basic Information
+                        </h3>
                     </div>
-                    <div>
-                        <label class="form-label">Location *</label>
-                        <input type="text" name="location" class="form-input" required value="{{ old('location', $package->location) }}">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="form-label">Description *</label>
-                        <textarea name="description" rows="3" class="form-input" required>{{ old('description', $package->description) }}</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pricing & Duration -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Pricing & Duration</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="form-label">Price (₹) *</label>
-                        <input type="number" name="price" class="form-input" required min="0" step="1" value="{{ old('price', $package->price) }}">
-                    </div>
-                    <div>
-                        <label class="form-label">Duration *</label>
-                        <input type="text" name="duration" class="form-input" required value="{{ old('duration', $package->duration) }}">
-                    </div>
-                    <div>
-                        <label class="form-label">Duration (Days) *</label>
-                        <input type="number" name="duration_days" class="form-input" required min="1" value="{{ old('duration_days', $package->duration_days) }}">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dates & Destination -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Dates & Destination</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="form-label">Select Destination *</label>
-                        <select name="destination_id" class="form-select w-full" required>
-                            @foreach($destinations as $destination)
-                                <option value="{{ $destination->id }}" {{ old('destination_id', $package->destination_id) == $destination->id ? 'selected' : '' }}>{{ $destination->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label">Start Date *</label>
-                        <input type="date" name="start_date" class="form-input" required value="{{ old('start_date', $package->start_date ? $package->start_date->format('Y-m-d') : '') }}">
-                    </div>
-                    <div>
-                        <label class="form-label">End Date *</label>
-                        <input type="date" name="end_date" class="form-input" required value="{{ old('end_date', $package->end_date ? $package->end_date->format('Y-m-d') : '') }}">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Image & Category -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Media & Category</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="form-label">Update Image</label>
-                        <div class="mt-2">
-                             @if($package->image)
-                                <img src="{{ asset('storage/' . $package->image) }}" alt="Current Image" class="h-20 w-20 object-cover rounded mb-2">
-                            @endif
-                            <input type="file" name="image_upload" class="form-input p-2 w-full" accept="image/*">
-                            <p class="text-xs text-gray-500 mt-1">Leave blank to keep current image</p>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="form-label">Category *</label>
-                        <select name="category" class="form-input" required>
-                            @foreach(['adventure', 'hill-station', 'cultural', 'beach', 'desert', 'trekking', 'nature', 'heritage', 'religious'] as $cat)
-                                <option value="{{ $cat }}" {{ old('category', $package->category) == $cat ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Status -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Status</h3>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-input">
-                            <option value="active" {{ old('status', $package->status) == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status', $package->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Departure Cities -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Departure Cities</h3>
-                <div id="departureCitiesContainer" class="space-y-2">
-                    @forelse($package->departure_cities ?? [] as $city)
-                        <div class="flex items-center space-x-2">
-                            <input type="text" name="departure_cities[]" class="form-input" value="{{ $city }}">
-                            <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    @empty
-                         <div class="flex items-center space-x-2">
-                            <input type="text" name="departure_cities[]" class="form-input" placeholder="e.g., Ahmedabad">
-                            <button type="button" onclick="addDepartureCity()" class="btn btn-outline"><i class="fas fa-plus"></i></button>
-                        </div>
-                    @endforelse
-                    <button type="button" onclick="addDepartureCity()" class="btn btn-outline mt-2"><i class="fas fa-plus"></i> Add City</button>
-                </div>
-            </div>
-
-             <!-- Available Months -->
-             <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Available Months</h3>
-                <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
-                    @foreach(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
-                        <label class="flex items-center">
-                            <input type="checkbox" name="available_months[]" value="{{ $month }}" 
-                                class="rounded border-gray-300 text-secondary focus:ring-secondary mr-2"
-                                {{ in_array($month, $package->available_months ?? []) ? 'checked' : '' }}>
-                            <span class="text-gray-800">{{ substr($month, 0, 3) }}</span>
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Itinerary -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Itinerary</h3>
-                <div id="itineraryContainer" class="space-y-4">
-                    @foreach($package->itinerary ?? [] as $index => $day)
-                        <div class="border border-gray-300 rounded-lg p-4 itinerary-day">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold">Day {{ $index + 1 }}</h4>
-                                <button type="button" onclick="this.closest('.itinerary-day').remove()" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Day Title *</label>
-                                <input type="text" name="itinerary[{{ $index }}][day]" class="form-input" required value="{{ $day['day'] ?? '' }}">
-                            </div>
-                            <div class="space-y-2 activities-container">
-                                @foreach($day['activities'] ?? [] as $activity)
-                                    <div class="flex items-center space-x-2">
-                                        <input type="text" name="itinerary[{{ $index }}][activities][]" class="form-input" value="{{ $activity }}">
-                                        <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                @endforeach
-                                <button type="button" onclick="addActivity(this)" class="btn btn-outline mt-2">
-                                    <i class="fas fa-plus"></i> Add Activity
-                                </button>
+                    <div class="p-6 space-y-6">
+                        <div>
+                            <label class="form-label text-gray-700">Package Name <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-heading"></i></span>
+                                <input type="text" name="name" class="form-input pl-11 text-lg font-medium" required value="{{ old('name', $package->name) }}" placeholder="e.g., Majestic Manali Tour">
                             </div>
                         </div>
-                    @endforeach
-                </div>
-                <button type="button" onclick="addItineraryDay()" class="btn btn-outline mt-3">
-                    <i class="fas fa-plus mr-2"></i> Add Day
-                </button>
-            </div>
-
-            <!-- Dynamic Lists -->
-            @foreach(['inclusions' => 'Inclusions', 'exclusions' => 'Exclusions', 'things_to_carry' => 'Things to Carry', 'terms_conditions' => 'Terms & Conditions'] as $field => $label)
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">{{ $label }}</h3>
-                    <div id="{{ $field }}Container" class="space-y-2">
-                        @foreach($package->$field ?? [] as $item)
-                             <div class="flex items-center space-x-2">
-                                <input type="text" name="{{ $field }}[]" class="form-input" value="{{ $item }}">
-                                <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                                    <i class="fas fa-minus"></i>
-                                </button>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="form-label text-gray-700">From City <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-plane-departure"></i></span>
+                                    <input type="text" name="from_city" class="form-input pl-11" required value="{{ old('from_city', $package->from_city) }}" placeholder="e.g., Delhi">
+                                </div>
                             </div>
-                        @endforeach
-                         <button type="button" onclick="addItem('{{ $field }}')" class="btn btn-outline mt-2">
-                            <i class="fas fa-plus"></i> Add Item
+                            <div>
+                                <label class="form-label text-gray-700">To (Location) <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" name="location" class="form-input pl-11" required value="{{ old('location', $package->location) }}" placeholder="e.g., Manali, Himachal Pradesh">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label text-gray-700">Duration Text <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-clock"></i></span>
+                                    <input type="text" name="duration" class="form-input pl-11" required value="{{ old('duration', $package->duration) }}" placeholder="e.g., 5 Nights / 6 Days">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label text-gray-700">Description <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <textarea name="description" rows="5" class="form-textarea w-full" required>{{ old('description', $package->description) }}</textarea>
+                                <div class="absolute bottom-2 right-2 text-xs text-gray-400 bg-white px-2 py-1 rounded">Markdown supported</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Itinerary Builder (Timeline Style) -->
+                 <div class="card border-0 shadow-sm ring-1 ring-gray-100 overflow-visible">
+                    <div class="border-b border-gray-100 p-6 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                             <span class="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center text-forest text-sm">
+                                <i class="fas fa-route"></i>
+                            </span>
+                            Itinerary
+                        </h3>
+                        <button type="button" onclick="addItineraryDay()" class="btn btn-sm bg-white border border-gray-200 text-forest hover:border-forest hover:bg-forest hover:text-white transition-all shadow-sm">
+                            <i class="fas fa-plus mr-1"></i> Add Day
                         </button>
                     </div>
-                </div>
-            @endforeach
+                    
+                    <div id="itineraryContainer" class="p-6 space-y-0 relative">
+                        <!-- Vertical Thread Line -->
+                        <div class="absolute left-[2.25rem] top-6 bottom-6 w-0.5 bg-gray-200" id="timelineProp" style="{{ empty($package->itinerary) ? 'display:none;' : '' }}"></div>
 
-            <!-- Branches -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Branches</h3>
-                <div id="branchesContainer" class="space-y-4">
-                    @foreach($package->branches ?? [] as $index => $branch)
-                        <div class="border border-gray-300 rounded-lg p-4 branch-item">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold">Branch {{ $index + 1 }}</h4>
-                                <button type="button" onclick="this.closest('.branch-item').remove()" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-minus"></i>
-                                </button>
+                        @foreach($package->itinerary ?? [] as $index => $day)
+                             <div class="itinerary-day relative pl-12 pb-8 group last:pb-0">
+                                <!-- Day Dot -->
+                                <div class="absolute left-5 top-0 w-8 h-8 -ml-4 bg-white border-4 border-forest rounded-full z-10 flex items-center justify-center shadow-sm text-xs font-bold text-forest">
+                                    {{ $index + 1 }}
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 transition-all hover:border-forest/30 hover:shadow-md relative">
+                                     <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button type="button" onclick="removeDay(this)" class="text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 gap-3 mb-4">
+                                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Day {{ $index + 1 }} Title</label>
+                                        <input type="text" name="itinerary[{{ $index }}][day]" class="form-input font-semibold text-gray-800 bg-white" required value="{{ $day['day'] ?? '' }}" placeholder="e.g., Arrival in Manali & Local Sightseeing">
+                                    </div>
+                                    
+                                    <div class="space-y-3 activities-container">
+                                        @foreach($day['activities'] ?? [] as $activity)
+                                            <div class="flex items-center gap-3 group/activity">
+                                                <div class="w-1.5 h-1.5 rounded-full bg-gold shrink-0"></div>
+                                                <input type="text" name="itinerary[{{ $index }}][activities][]" class="form-input text-sm py-2 bg-white border-transparent hover:border-gray-300 focus:border-gold transition-colors" value="{{ $activity }}">
+                                                <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-0 group-hover/activity:opacity-100 transition-opacity">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                        <button type="button" onclick="addActivity(this)" class="text-sm text-gold hover:text-yellow-700 font-medium mt-2 inline-flex items-center px-2 py-1 rounded hover:bg-gold/10 transition-colors">
+                                            <i class="fas fa-plus-circle mr-1.5"></i> Add Activity
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="form-label">City *</label>
-                                    <input type="text" name="branches[{{ $index }}][city]" class="form-input" required value="{{ $branch['city'] ?? '' }}">
+                        @endforeach
+                    </div>
+                    
+                    @if(empty($package->itinerary))
+                         <div id="noItineraryMsg" class="text-center py-12">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                <i class="fas fa-map-marked-alt text-2xl"></i>
+                            </div>
+                            <h4 class="text-gray-900 font-medium mb-1">No Itinerary Added</h4>
+                            <p class="text-gray-500 text-sm mb-4">Start building the day-wise schedule for this package.</p>
+                            <button type="button" onclick="addItineraryDay()" class="btn btn-primary btn-sm">Start Adding Days</button>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Package Details (Tabs Style) -->
+                 <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                     <div class="border-b border-gray-100 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center text-forest text-sm">
+                                <i class="fas fa-list-ul"></i>
+                            </span>
+                            Package Inclusions & Details
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            @foreach(['inclusions' => 'Inclusions', 'exclusions' => 'Exclusions', 'things_to_carry' => 'Things to Carry', 'terms_conditions' => 'Terms & Conditions'] as $field => $label)
+                                <div class="bg-gray-50/50 p-5 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <label class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                                            @if($field == 'inclusions') <i class="fas fa-check text-green-500"></i>
+                                            @elseif($field == 'exclusions') <i class="fas fa-times text-red-500"></i>
+                                            @else <i class="fas fa-info-circle text-blue-500"></i>
+                                            @endif
+                                            {{ $label }}
+                                        </label>
+                                        <button type="button" onclick="addItem('{{ $field }}')" class="text-xs btn btn-xs btn-outline bg-white border-gray-200 shadow-sm">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                    <div id="{{ $field }}Container" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
+                                        @foreach($package->$field ?? [] as $item)
+                                             <div class="flex items-center gap-2 group/item">
+                                                <div class="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0"></div>
+                                                <input type="text" name="{{ $field }}[]" class="form-input text-sm py-1.5 bg-white border-transparent focus:bg-white hover:border-gray-300 focus:border-gold transition-colors" value="{{ $item }}">
+                                                <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="form-label">Phone Numbers *</label>
-                                    <input type="text" name="branches[{{ $index }}][phone]" class="form-input" required value="{{ $branch['phone'] ?? '' }}">
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Sidebar (4/12) -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Sticky Wrapper -->
+                 <div class="sticky top-6 space-y-6">
+                    
+                    <!-- Publishing Status -->
+                     <div class="card border-0 shadow-md ring-1 ring-gray-100 bg-white">
+                        <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-forest/5 to-transparent">
+                            <h3 class="text-md font-bold text-forest mb-0">Publishing Status</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Current Status</label>
+                                <select name="status" class="form-select font-medium text-gray-800 w-full" data-status-color>
+                                    <option value="active" {{ old('status', $package->status) == 'active' ? 'selected' : '' }}>Active (Published)</option>
+                                    <option value="inactive" {{ old('status', $package->status) == 'inactive' ? 'selected' : '' }}>Inactive (Draft)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <div class="flex flex-col">
+                                    <span class="text-gray-700 font-medium text-sm flex items-center gap-2">
+                                        <i class="fas fa-star text-gold"></i> Featured
+                                    </span>
+                                    <span class="text-[10px] text-gray-400">Request admin for feature</span>
                                 </div>
-                                <div class="md:col-span-3">
-                                    <label class="form-label">Address *</label>
-                                    <textarea name="branches[{{ $index }}][address]" rows="2" class="form-input" required>{{ $branch['address'] ?? '' }}</textarea>
+                                <div class="px-2 py-1 bg-gray-100 text-xs text-gray-500 rounded border border-gray-200">
+                                    {{ $package->is_featured ? 'Featured' : 'Standard' }}
                                 </div>
+                                <input type="hidden" name="featured" value="{{ $package->is_featured ? '1' : '0' }}">
+                            </div>
+                             <div class="pt-2">
+                                <button type="submit" class="w-full btn btn-primary py-2.5 shadow-md shadow-gold/20">
+                                    Update Package
+                                </button>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Media -->
+                     <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                        <div class="p-5 border-b border-gray-100">
+                            <h3 class="text-md font-bold text-gray-900">Cover Image</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="space-y-4">
+                                @if($package->image)
+                                    <div class="relative rounded-xl overflow-hidden aspect-video w-full group shadow-md">
+                                        <img src="{{ $package->image_url }}" alt="Package Image" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                                            <span class="text-white text-xs font-medium border border-white/50 px-3 py-1 rounded-full">Current Cover</span>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                <label class="block">
+                                    <span class="sr-only">Choose profile photo</span>
+                                    <input type="file" name="image_upload" class="block w-full text-sm text-gray-500
+                                      file:mr-4 file:py-2 file:px-4
+                                      file:rounded-full file:border-0
+                                      file:text-xs file:font-semibold
+                                      file:bg-forest/10 file:text-forest
+                                      hover:file:bg-forest/20
+                                      transition-colors cursor-pointer
+                                    " accept="image/*"/>
+                                </label>
+                                <p class="text-xs text-gray-400">Recommended: 1200x800px. Max: 5MB.</p>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-                <button type="button" onclick="addBranch()" class="btn btn-outline mt-3">
-                    <i class="fas fa-plus mr-2"></i> Add Branch
-                </button>
-            </div>
-
-            <!-- Contact Information -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Contact Information</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="form-label">Website</label>
-                        <input type="url" name="contact_info[website]" class="form-input" value="{{ old('contact_info.website', $package->contact_info['website'] ?? '') }}">
                     </div>
-                    <div>
-                        <label class="form-label">Email</label>
-                        <input type="email" name="contact_info[email]" class="form-input" value="{{ old('contact_info.email', $package->contact_info['email'] ?? '') }}">
+
+                    <!-- Pricing & Dates -->
+                    <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                        <div class="p-5 border-b border-gray-100">
+                             <h3 class="text-md font-bold text-gray-900">Pricing & Availability</h3>
+                        </div>
+                        <div class="p-5 space-y-5">
+                             <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-1">Base Price</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
+                                    <input type="number" name="price" class="form-input pl-8 text-xl font-bold text-forest" required min="0" value="{{ old('price', $package->price) }}">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label text-xs">Days (Count)</label>
+                                    <input type="number" name="duration_days" class="form-input" required min="1" value="{{ old('duration_days', $package->duration_days) }}">
+                                </div>
+                                <div class="opacity-50">
+                                    <label class="form-label text-xs">Rating</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gold text-xs"><i class="fas fa-star"></i></span>
+                                        <input type="number" class="form-input pl-8 bg-gray-50" readonly value="{{ $package->rating ?? '0' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3 pt-2">
+                                 <div>
+                                    <label class="form-label text-xs">Valid From - To</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="date" name="start_date" class="form-input text-xs" required value="{{ old('start_date', $package->start_date ? $package->start_date->format('Y-m-d') : '') }}">
+                                        <span class="text-gray-400">-</span>
+                                        <input type="date" name="end_date" class="form-input text-xs" required value="{{ old('end_date', $package->end_date ? $package->end_date->format('Y-m-d') : '') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                             <div class="pt-2 border-t border-gray-100">
+                                 <label class="form-label text-xs mb-2 block">Best Months</label>
+                                 <div class="flex flex-wrap gap-1.5">
+                                    @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $month)
+                                        @php $fullMonth = date('F', strtotime($month)); @endphp
+                                        <label class="cursor-pointer select-none">
+                                            <input type="checkbox" name="available_months[]" value="{{ $fullMonth }}" 
+                                                class="peer sr-only"
+                                                {{ in_array($fullMonth, $package->available_months ?? []) ? 'checked' : '' }}>
+                                            <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-md bg-gray-50 text-gray-400 border border-gray-200 peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest transition-all hover:border-gray-300">
+                                                {{ $month }}
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                 </div>
+                            </div>
+
+                             <div class="pt-2 border-t border-gray-100">
+                                <label class="form-label text-xs block mb-2">Departure Cities</label>
+                                <div id="departureCitiesContainer" class="space-y-2 mb-2">
+                                    @forelse($package->departure_cities ?? [] as $city)
+                                         <div class="flex items-center gap-2 group/city">
+                                            <div class="relative w-full">
+                                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"><i class="fas fa-plane-departure"></i></span>
+                                                <input type="text" name="departure_cities[]" class="form-input text-xs py-1.5 pl-8" value="{{ $city }}">
+                                            </div>
+                                            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-0 group-hover/city:opacity-100 transition-opacity">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    @empty
+                                    @endforelse
+                                </div>
+                                <button type="button" onclick="addDepartureCity()" class="text-xs text-forest hover:text-forest-light font-bold uppercase tracking-wider flex items-center gap-1">
+                                    <i class="fas fa-plus"></i> Add City
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Organization -->
+                    <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                         <div class="p-5 border-b border-gray-100">
+                             <h3 class="text-md font-bold text-gray-900">Organization</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div>
+                                <label class="form-label text-xs">Category</label>
+                                <select name="category" class="form-select w-full" required>
+                                    @foreach(['adventure' => 'Adventure', 'hill-station' => 'Hill Station', 'cultural' => 'Cultural', 'beach' => 'Beach', 'desert' => 'Desert', 'trekking' => 'Trekking', 'nature' => 'Nature', 'heritage' => 'Heritage', 'religious' => 'Religious'] as $val => $label)
+                                        <option value="{{ $val }}" {{ old('category', $package->category) == $val ? 'selected' : '' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                             <div>
+                                <label class="form-label text-xs">Destination</label>
+                                <select name="destination_id" class="form-select w-full" required>
+                                    @foreach($destinations as $destination)
+                                        <option value="{{ $destination->id }}" {{ old('destination_id', $package->destination_id) == $destination->id ? 'selected' : '' }}>{{ $destination->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Agency field hidden for Agency User -->
+                            <input type="hidden" name="agency_id" value="{{ $package->agency_id }}">
+                        </div>
+                    </div>
+                    
+                     <!-- Branches & Contact -->
+                    <div class="card border-0 shadow-sm ring-1 ring-gray-100">
+                         <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                             <h3 class="text-md font-bold text-gray-900">Branches</h3>
+                             <button type="button" onclick="addBranch()" class="text-xs btn btn-xs btn-outline bg-white border-dashed">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <!-- Contact Info -->
+                            <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4">
+                                <div>
+                                    <label class="form-label text-[10px] uppercase text-gray-400">Contact Email</label>
+                                    <input type="email" name="contact_info[email]" class="form-input text-xs py-1" value="{{ old('contact_info.email', $package->contact_info['email'] ?? '') }}" placeholder="Optional">
+                                </div>
+                                 <div>
+                                    <label class="form-label text-[10px] uppercase text-gray-400">Website</label>
+                                    <input type="url" name="contact_info[website]" class="form-input text-xs py-1" value="{{ old('contact_info.website', $package->contact_info['website'] ?? '') }}" placeholder="Optional">
+                                </div>
+                            </div>
+
+                            <div id="branchesContainer" class="space-y-3">
+                                @foreach($package->branches ?? [] as $index => $branch)
+                                     <div class="branch-item border border-gray-200 rounded-lg p-3 bg-gray-50/50 text-sm relative group">
+                                        <button type="button" onclick="this.closest('.branch-item').remove()" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-2">
+                                                <i class="fas fa-building text-gray-400 text-xs"></i>
+                                                <input type="text" name="branches[{{ $index }}][city]" class="form-input text-xs py-1 bg-white" required value="{{ $branch['city'] ?? '' }}" placeholder="City Name">
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <i class="fas fa-phone text-gray-400 text-xs"></i>
+                                                <input type="text" name="branches[{{ $index }}][phone]" class="form-input text-xs py-1 bg-white" required value="{{ $branch['phone'] ?? '' }}" placeholder="Phone Number">
+                                            </div>
+                                            <textarea name="branches[{{ $index }}][address]" rows="2" class="form-textarea text-xs py-1 bg-white w-full" required placeholder="Full Address">{{ $branch['address'] ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                             @if(empty($package->branches) && empty($package->contact_info))
+                                <p class="text-xs text-center text-gray-400 italic">No contact info added.</p>
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <div class="flex justify-end space-x-3 pt-6 border-t">
-                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save mr-2"></i> Update Package
-                </button>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @push('scripts')
@@ -275,64 +433,97 @@
     function addDepartureCity() {
         const container = document.getElementById('departureCitiesContainer');
         const div = document.createElement('div');
-        div.className = 'flex items-center space-x-2';
+         div.className = 'flex items-center gap-2 group/city';
         div.innerHTML = `
-            <input type="text" name="departure_cities[]" class="form-input" placeholder="e.g., Delhi">
-            <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                <i class="fas fa-minus"></i>
+            <div class="relative w-full">
+                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"><i class="fas fa-plane-departure"></i></span>
+                <input type="text" name="departure_cities[]" class="form-input text-xs py-1.5 pl-8" placeholder="e.g., Delhi">
+            </div>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 transition-opacity">
+                <i class="fas fa-times"></i>
             </button>
         `;
-        container.insertBefore(div, container.lastElementChild);
+        container.appendChild(div);
     }
 
     function addItem(field) {
         const container = document.getElementById(field + 'Container');
         const div = document.createElement('div');
-        div.className = 'flex items-center space-x-2';
+        div.className = 'flex items-center gap-2 group/item';
         div.innerHTML = `
-            <input type="text" name="${field}[]" class="form-input">
-            <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                <i class="fas fa-minus"></i>
+            <div class="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0"></div>
+            <input type="text" name="${field}[]" class="form-input text-sm py-1.5 bg-white border-transparent focus:bg-white hover:border-gray-300 focus:border-gold transition-colors" placeholder="Add item...">
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-100 transition-opacity">
+                <i class="fas fa-times"></i>
             </button>
         `;
-         container.insertBefore(div, container.lastElementChild);
+        container.appendChild(div);
     }
 
     let dayCount = {{ count($package->itinerary ?? []) }};
+    
+    function updateTimeline() {
+        const container = document.getElementById('itineraryContainer');
+        const prop = document.getElementById('timelineProp');
+        if(container.querySelectorAll('.itinerary-day').length > 0) {
+            prop.style.display = 'block';
+            document.getElementById('noItineraryMsg')?.remove();
+        } else {
+            prop.style.display = 'none';
+        }
+    }
+
     function addItineraryDay() {
         const container = document.getElementById('itineraryContainer');
         const div = document.createElement('div');
-        div.className = 'border border-gray-300 rounded-lg p-4 itinerary-day mt-4';
+        div.className = 'itinerary-day relative pl-12 pb-8 group last:pb-0';
         div.innerHTML = `
-            <div class="flex justify-between items-center mb-3">
-                <h4 class="font-semibold">Day ${dayCount + 1}</h4>
-                <button type="button" onclick="this.closest('.itinerary-day').remove()" class="btn btn-danger btn-sm">
-                    <i class="fas fa-minus"></i>
-                </button>
+             <div class="absolute left-5 top-0 w-8 h-8 -ml-4 bg-white border-4 border-forest rounded-full z-10 flex items-center justify-center shadow-sm text-xs font-bold text-forest">
+                ${dayCount + 1}
             </div>
-            <div class="mb-3">
-                <label class="form-label">Day Title *</label>
-                <input type="text" name="itinerary[${dayCount}][day]" class="form-input" required placeholder="e.g., DAY ${dayCount + 1}: Title">
-            </div>
-            <div class="space-y-2 activities-container">
-                 <button type="button" onclick="addActivity(this)" class="btn btn-outline">
-                    <i class="fas fa-plus"></i> Add Activity
-                </button>
+            
+            <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 transition-all hover:border-forest/30 hover:shadow-md relative">
+                 <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button" onclick="removeDay(this)" class="text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-md transition-colors">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 mb-4">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Day ${dayCount + 1} Title</label>
+                    <input type="text" name="itinerary[${dayCount}][day]" class="form-input font-semibold text-gray-800 bg-white" required placeholder="e.g., Exploration Day">
+                </div>
+                
+                <div class="space-y-3 activities-container">
+                     <button type="button" onclick="addActivity(this)" class="text-sm text-gold hover:text-yellow-700 font-medium mt-2 inline-flex items-center px-2 py-1 rounded hover:bg-gold/10 transition-colors">
+                        <i class="fas fa-plus-circle mr-1.5"></i> Add Activity
+                    </button>
+                </div>
             </div>
         `;
         container.appendChild(div);
         dayCount++;
+        updateTimeline();
+    }
+    
+    function removeDay(btn) {
+        btn.closest('.itinerary-day').remove();
+        updateTimeline();
     }
 
     function addActivity(btn) {
         const container = btn.closest('.activities-container');
-        const dayIndex = container.closest('.itinerary-day').querySelector('input[name*="[day]"]').name.match(/\[(\d+)\]/)[1];
+        const dayInput = container.closest('.itinerary-day').querySelector('input[name*="[day]"]');
+        const dayIndexMatch = dayInput.name.match(/itinerary\[(\d+)\]/);
+        const dayIndex = dayIndexMatch ? dayIndexMatch[1] : dayCount;
+        
         const div = document.createElement('div');
-        div.className = 'flex items-center space-x-2';
+        div.className = 'flex items-center gap-3 group/activity';
         div.innerHTML = `
-            <input type="text" name="itinerary[${dayIndex}][activities][]" class="form-input" placeholder="Activity">
-            <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
-                <i class="fas fa-minus"></i>
+             <div class="w-1.5 h-1.5 rounded-full bg-gold shrink-0"></div>
+            <input type="text" name="itinerary[${dayIndex}][activities][]" class="form-input text-sm py-2 bg-white border-transparent hover:border-gray-300 focus:border-gold transition-colors" placeholder="Activity detail">
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-100 transition-opacity">
+                <i class="fas fa-times"></i>
             </button>
         `;
         container.insertBefore(div, btn);
@@ -342,27 +533,21 @@
     function addBranch() {
         const container = document.getElementById('branchesContainer');
         const div = document.createElement('div');
-        div.className = 'border border-gray-300 rounded-lg p-4 branch-item mt-4';
+        div.className = 'branch-item border border-gray-200 rounded-lg p-3 bg-gray-50/50 text-sm relative group';
         div.innerHTML = `
-            <div class="flex justify-between items-center mb-3">
-                <h4 class="font-semibold">Branch ${branchCount + 1}</h4>
-                <button type="button" onclick="this.closest('.branch-item').remove()" class="btn btn-danger btn-sm">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="form-label">City *</label>
-                    <input type="text" name="branches[${branchCount}][city]" class="form-input" required placeholder="e.g., Mumbai">
+            <button type="button" onclick="this.closest('.branch-item').remove()" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-100 transition-opacity">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-building text-gray-400 text-xs"></i>
+                    <input type="text" name="branches[${branchCount}][city]" class="form-input text-xs py-1 bg-white" required placeholder="City Name">
                 </div>
-                <div>
-                    <label class="form-label">Phone Numbers *</label>
-                    <input type="text" name="branches[${branchCount}][phone]" class="form-input" required placeholder="e.g., +91 9876543210">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-phone text-gray-400 text-xs"></i>
+                    <input type="text" name="branches[${branchCount}][phone]" class="form-input text-xs py-1 bg-white" required placeholder="Phone Number">
                 </div>
-                <div class="md:col-span-3">
-                    <label class="form-label">Address *</label>
-                    <textarea name="branches[${branchCount}][address]" rows="2" class="form-input" required placeholder="Full Address"></textarea>
-                </div>
+                <textarea name="branches[${branchCount}][address]" rows="2" class="form-textarea text-xs py-1 bg-white w-full" required placeholder="Full Address"></textarea>
             </div>
         `;
         container.appendChild(div);

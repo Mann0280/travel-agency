@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'ZUBEEE Travel Admin')</title>
+    <title>@yield('title', \App\Models\Setting::get('site_name', 'ZUBEEE Travel Admin'))</title>
     
     <!-- Google Fonts: Poppins & Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Dynamic Colors -->
+    @php
+        $primaryColor = \App\Models\Setting::get('primary_color', '#17320b');
+        $secondaryColor = \App\Models\Setting::get('secondary_color', '#a8894d');
+    @endphp
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -16,10 +22,10 @@
             theme: {
                 extend: {
                     colors: {
-                        'forest': '#1a3a1a',
-                        'forest-light': '#2a4a2a',
-                        'forest-dark': '#0a2a0a',
-                        'gold': '#dbb363',
+                        'forest': '{{ $primaryColor }}',
+                        'forest-light': '{{ $primaryColor }}DD', // Approximate light
+                        'forest-dark': '{{ $primaryColor }}', // Should be darker ideally, using same for now or simple opacity
+                        'gold': '{{ $secondaryColor }}',
                         'champagne': '#fdfbf7',
                         'slate': '#57688a',
                         'admin-black': '#0f172a',
@@ -35,6 +41,11 @@
     </script>
     
     <style>
+        :root {
+            --primary-color: {{ $primaryColor }};
+            --secondary-color: {{ $secondaryColor }};
+        }
+
         /* Fixed layout structure */
         html,
         body {
@@ -58,7 +69,7 @@
             top: 0;
             bottom: 0;
             width: 250px;
-            background: linear-gradient(180deg, #17320b 0%, #1a3a0f 100%);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color) 100%); /* simplified gradient using primary */
             z-index: 50;
             overflow-y: auto;
             overflow-x: hidden;
@@ -127,15 +138,15 @@
                 right: 0;
                 z-index: 50;
                 height: 60px;
-                background: #17320b;
+                background: var(--primary-color);
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
         }
 
         /* Active menu styling */
         .active-menu {
-            background-color: rgba(168, 137, 77, 0.2);
-            border-left: 3px solid #a8894d;
+            background-color: rgba(255, 255, 255, 0.1); /* Neutral active state for flexibility */
+            border-left: 3px solid var(--secondary-color);
             color: white;
         }
 
@@ -149,8 +160,9 @@
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(168, 137, 77, 0.5);
+            background: var(--secondary-color);
             border-radius: 3px;
+            opacity: 0.5;
         }
 
         /* Table responsive styles */
@@ -160,15 +172,109 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Forms & Buttons from snippet */
+        /* Forms & Buttons Utility Classes */
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151; /* gray-700 */
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            color: #1f2937; /* gray-800 */
+            background-color: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(168, 137, 77, 0.2); /* Gold ring */
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
         .btn-primary {
-            background-color: #a8894d;
+            background-color: var(--secondary-color);
             color: white;
+            border-color: var(--secondary-color);
         }
 
         .btn-primary:hover {
             background-color: #9d7c4f;
+            border-color: #9d7c4f;
         }
+
+        .btn-secondary {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #0f2407;
+            border-color: #0f2407;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #4b5563; /* gray-600 */
+            border-color: #d1d5db; /* gray-300 */
+        }
+
+        .btn-outline:hover {
+            background-color: #f3f4f6; /* gray-50 */
+            color: #1f2937; /* gray-800 */
+        }
+
+        .btn-danger {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626; /* red-600 */
+            border-color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem; /* Slightly more rounded */
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f3f4f6; /* gray-100 */
+        }
+
+        /* Text Colors Utility */
+        .text-forest { color: var(--primary-color) !important; }
+        .text-gold { color: var(--secondary-color) !important; }
+        .bg-forest { background-color: var(--primary-color) !important; }
+        .bg-gold { background-color: var(--secondary-color) !important; }
+        
     </style>
     
     <!-- Font Awesome -->
@@ -176,7 +282,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-admin-content">
+<body class="bg-gray-50">
     <div class="admin-layout" x-data="{ sidebarOpen: false }" :class="{ 'mobile-sidebar-open': sidebarOpen }">
         <!-- Mobile Overlay -->
         <div x-show="sidebarOpen" 

@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', 'ZUBEEE - Search Packages')
+@section('title', ($site_settings->get('site_name') ?? 'ZUBEEE') . ' - Search Packages')
 
 @section('content')
 <style>

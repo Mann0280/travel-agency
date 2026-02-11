@@ -56,10 +56,6 @@
                 class="tab-button flex-shrink-0 px-3 py-2 text-xs font-medium rounded-full border border-secondary {{ $currentTab == 'profile' ? 'active text-white' : 'text-text hover:bg-secondary/20' }}">
                 Profile
             </a>
-            <a href="{{ route('account', ['tab' => 'bookings']) }}"
-                class="tab-button flex-shrink-0 px-3 py-2 text-xs font-medium rounded-full border border-secondary {{ $currentTab == 'bookings' ? 'active text-white' : 'text-text hover:bg-secondary/20' }}">
-                Bookings
-            </a>
             <a href="{{ route('account', ['tab' => 'partner']) }}"
                 class="tab-button flex-shrink-0 px-3 py-2 text-xs font-medium rounded-full border border-secondary {{ $currentTab == 'partner' ? 'active text-white' : 'text-text hover:bg-secondary/20' }}">
                 Partner
@@ -112,7 +108,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-text mb-1">Phone Number</label>
-                        <input type="tel" name="phone" value="+1 234 567 8900"
+                        <input type="tel" name="phone" value="{{ $site_settings->get('phone') ?? '+1 234 567 8900' }}"
                             class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text">
                         <div class="text-red-500 text-xs mt-1 hidden" id="phoneError"></div>
                     </div>
@@ -156,41 +152,135 @@
             </div>
             @endif
 
-            <!-- Bookings Tab -->
-            @if($currentTab == 'bookings')
-            <div id="bookings" class="tab-content bg-white rounded-lg p-4">
+            <!-- Bookings Tab Removed -->
+            @if(false)
+            <div id="bookings" class="tab-content bg-white rounded-lg p-4" style="display:none;">
                 <h2 class="text-lg font-bold text-text mb-4">My Bookings</h2>
 
                 <div class="space-y-3">
-                    @foreach($bookings as $booking)
+                    @foreach($rawBookings as $index => $rawBooking)
                     <div class="border border-secondary rounded-lg p-3 gradient-bg">
                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-sm font-semibold text-text line-clamp-1">{{ $booking['title'] }}</h3>
-                            <span class="booking-status {{ $booking['status_class'] }} rounded-full">{{ $booking['status'] }}</span>
+                            <h3 class="text-sm font-semibold text-text line-clamp-1">{{ $rawBooking->package->name ?? 'Package Deleted' }}</h3>
+                            <span class="booking-status {{ $bookings[$index]['status_class'] }} rounded-full">{{ ucfirst($rawBooking->status) }}</span>
                         </div>
-                        <p class="text-xs text-gray-600 mb-2">ID: {{ $booking['id'] }} • {{ $booking['duration'] }}</p>
+                        <p class="text-xs text-gray-600 mb-2">ID: ZB{{ str_pad($rawBooking->id, 6, '0', STR_PAD_LEFT) }} • {{ $rawBooking->package->duration ?? 'N/A' }}</p>
                         <div class="space-y-1 text-xs">
                             <div class="flex justify-between">
                                 <span class="text-text">Travel Date:</span>
-                                <span class="text-gray-600">{{ $booking['travel_date'] }}</span>
+                                <span class="text-gray-600">{{ $rawBooking->travel_date ? $rawBooking->travel_date->format('M d, Y') : 'Flexible' }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-text">Travelers:</span>
-                                <span class="text-gray-600">{{ $booking['travelers'] }}</span>
+                                <span class="text-gray-600">{{ $rawBooking->travellers }} Adults</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-text">Total:</span>
-                                <span class="text-secondary font-bold">{{ $booking['total'] }}</span>
+                                <span class="text-secondary font-bold">₹{{ number_format($rawBooking->total_amount, 2) }}</span>
                             </div>
                         </div>
                         <div class="flex gap-2 mt-3">
-                            <a href="#"
-                                class="flex-1 bg-secondary text-white text-center py-2 rounded text-xs font-medium hover:bg-gold transition">Details</a>
-                            <button
-                                class="flex-1 bg-gray-600 text-white py-2 rounded text-xs hover:bg-gray-700 transition">Invoice</button>
+                            <button data-booking-id="{{ $rawBooking->id }}"
+                                class="booking-details-btn flex-1 bg-secondary text-white text-center py-2 rounded text-xs font-medium hover:bg-gold transition">Details</button>
+                            <a href="{{ route('account.booking.invoice', $rawBooking->id) }}" target="_blank"
+                                onclick="showInvoiceAlert(event)"
+                                class="invoice-download-btn flex-1 bg-gray-600 text-white text-center py-2 rounded text-xs hover:bg-gray-700 transition inline-block">Invoice</a>
                         </div>
                     </div>
                     @endforeach
+                </div>
+            </div>
+
+            <!-- Booking Details Modal -->
+            <div id="bookingDetailsModal" class="modal-overlay modal-hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="text-lg font-bold text-text">Booking Details</h3>
+                        <button id="closeBookingModal" class="text-gray-600 hover:text-text">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="space-y-4">
+                            <!-- Booking ID & Status -->
+                            <div class="flex justify-between items-center pb-3 border-b border-gray-200">
+                                <div>
+                                    <p class="text-xs text-gray-600">Booking ID</p>
+                                    <p class="text-sm font-bold text-text" id="modal-booking-id"></p>
+                                </div>
+                                <span id="modal-status" class="booking-status rounded-full"></span>
+                            </div>
+
+                            <!-- Package Details -->
+                            <div>
+                                <h4 class="text-sm font-bold text-text mb-2">Package Information</h4>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Package:</span>
+                                        <span class="text-text font-medium" id="modal-package-name"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Duration:</span>
+                                        <span class="text-text" id="modal-duration"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Location:</span>
+                                        <span class="text-text" id="modal-location"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Travel Details -->
+                            <div>
+                                <h4 class="text-sm font-bold text-text mb-2">Travel Information</h4>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Travel Date:</span>
+                                        <span class="text-text" id="modal-travel-date"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Travelers:</span>
+                                        <span class="text-text" id="modal-travelers"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div>
+                                <h4 class="text-sm font-bold text-text mb-2">Contact Information</h4>
+                                <div class="space-y-2 text-xs">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Name:</span>
+                                        <span class="text-text" id="modal-customer-name"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Email:</span>
+                                        <span class="text-text" id="modal-customer-email"></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Phone:</span>
+                                        <span class="text-text" id="modal-customer-phone"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Details -->
+                            <div class="bg-gradient-bg p-3 rounded-lg border border-secondary">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-bold text-text">Total Amount:</span>
+                                    <span class="text-lg font-black text-secondary" id="modal-total-amount"></span>
+                                </div>
+                            </div>
+
+                            <!-- Special Requests -->
+                            <div id="modal-special-requests-section" class="hidden">
+                                <h4 class="text-sm font-bold text-text mb-2">Special Requests</h4>
+                                <p class="text-xs text-gray-600" id="modal-special-requests"></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endif
@@ -201,9 +291,10 @@
                 <h2 class="text-lg font-bold text-text mb-4">Partner With Us</h2>
 
                 <div class="space-y-4 text-sm">
-                    <p class="text-gray-600">Join ZUBEEE's network of trusted travel partners.</p>
+                    <p class="text-gray-600">{{ $partnerData['description'] ?? 'Join ZUBEEE\'s network of trusted travel partners.' }}</p>
 
                     @if(auth()->user()->agency)
+                    <!-- User is already a partner -->
                     <div class="bg-forest/5 p-4 rounded-xl border border-forest/20 mb-4">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-lg bg-forest/10 flex items-center justify-center text-forest">
@@ -220,35 +311,123 @@
                             <i class="fas fa-external-link-alt text-[10px]"></i>
                         </a>
                     </div>
+                    @elseif(auth()->user()->partnerApplication)
+                        @php
+                            $application = auth()->user()->partnerApplication;
+                        @endphp
+                        
+                        @if($application->status == 'pending')
+                        <!-- Application is pending -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-yellow-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-bold text-yellow-900 mb-1">Application Under Review</h4>
+                                    <p class="text-xs text-yellow-700 mb-2">Your partner application is being reviewed by our team. We'll notify you once it's processed.</p>
+                                    <div class="text-xs text-yellow-600">
+                                        <p><strong>Agency Name:</strong> {{ $application->agency_name }}</p>
+                                        <p><strong>Submitted:</strong> {{ $application->created_at->format('M d, Y') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @elseif($application->status == 'rejected')
+                        <!-- Application was rejected -->
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-times-circle text-red-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-bold text-red-900 mb-1">Application Not Approved</h4>
+                                    <p class="text-xs text-red-700 mb-2">Unfortunately, your application was not approved at this time.</p>
+                                    @if($application->admin_notes)
+                                    <div class="bg-white rounded p-2 mb-2">
+                                        <p class="text-xs text-gray-700"><strong>Reason:</strong> {{ $application->admin_notes }}</p>
+                                    </div>
+                                    @endif
+                                    <p class="text-xs text-red-600">You can submit a new application below.</p>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     @endif
 
+                    @if(!auth()->user()->agency && (!auth()->user()->partnerApplication || auth()->user()->partnerApplication->status == 'rejected'))
+                    <!-- Show application form -->
+                    @if(!empty($partnerData['benefits']))
                     <div>
                         <h3 class="text-base font-semibold text-text mb-2">Benefits</h3>
-                        <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                            <li>Access to our customer base</li>
-                            <li>Marketing support</li>
-                            <li>Streamlined booking</li>
-                            <li>Real-time management</li>
+                        <ul class="list-disc pl-4 text-gray-600 space-y-1 mb-4">
+                            @foreach($partnerData['benefits'] as $benefit)
+                                <li>{{ $benefit }}</li>
+                            @endforeach
                         </ul>
                     </div>
+                    @endif
 
+                    @if(!empty($partnerData['requirements']))
                     <div>
                         <h3 class="text-base font-semibold text-text mb-2">Requirements</h3>
-                        <ul class="list-disc pl-4 text-gray-600 space-y-1">
-                            <li>Registered travel agency</li>
-                            <li>Valid business license</li>
-                            <li>2+ years operation</li>
-                            <li>Positive reviews</li>
+                        <ul class="list-disc pl-4 text-gray-600 space-y-1 mb-4">
+                            @foreach($partnerData['requirements'] as $req)
+                                <li>{{ $req }}</li>
+                            @endforeach
                         </ul>
                     </div>
+                    @endif
 
+                    <!-- Application Form -->
                     <div class="gradient-bg p-4 rounded-lg border border-secondary">
-                        <h3 class="text-base font-semibold text-text mb-2">Ready to Partner?</h3>
-                        <p class="text-gray-600 text-sm mb-3">Apply now and we'll contact you within 2 days.</p>
-                        <button id="applyNowBtn"
-                            class="w-full bg-secondary text-white py-2 rounded text-sm font-medium hover:bg-gold transition">Apply
-                            Now</button>
+                        <h3 class="text-base font-semibold text-text mb-3">{{ $partnerData['apply_button_text'] ?? 'Apply Now' }}</h3>
+                        
+                        @if ($errors->any())
+                            <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4 text-sm">
+                                <ul class="list-disc pl-4">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('partner.apply') }}" method="POST" class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-xs font-medium text-text mb-1">Agency Name *</label>
+                                <input type="text" name="agency_name" required
+                                       class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text mb-1">Business Email *</label>
+                                <input type="email" name="business_email" required
+                                       class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text mb-1">Phone Number *</label>
+                                <input type="tel" name="phone" required
+                                       class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text mb-1">Business Address *</label>
+                                <textarea name="address" rows="2" required
+                                          class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text mb-1">Business Description * (min 10 characters)</label>
+                                <textarea name="description" rows="3" required
+                                          class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text"
+                                          placeholder="Tell us about your travel agency..."></textarea>
+                            </div>
+                            <button type="submit"
+                                    class="w-full bg-secondary text-white py-2 rounded text-sm font-medium hover:bg-gold transition">
+                                Submit Application
+                            </button>
+                        </form>
                     </div>
+                    @endif
                 </div>
             </div>
             @endif
@@ -262,36 +441,46 @@
                     <div>
                         <h3 class="text-base font-semibold text-text mb-3">FAQ</h3>
 
-                        <div class="space-y-2">
-                            @foreach($faqs as $faq)
-                            <div class="border border-secondary rounded-lg gradient-bg">
+                        <div class="space-y-3">
+                            @forelse($faqs as $faq)
+                            <div class="rounded-lg overflow-hidden faq-item">
                                 <button
-                                    class="faq-toggle w-full text-left p-3 text-sm font-medium text-text flex justify-between items-center">
-                                    {{ $faq->title }}
-                                    <svg class="w-4 h-4 text-gray-600 transition-transform" fill="none"
+                                    class="faq-toggle w-full text-left px-4 py-3 text-sm font-medium text-text flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <span>{{ $faq->question }}</span>
+                                    <svg class="w-4 h-4 text-gray-500 transition-transform duration-200 transform" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </button>
-                                <div class="faq-content p-3 border-t border-secondary text-gray-600 text-sm hidden">
-                                    {{ $faq->content }}
+                                <div class="faq-content px-4 py-3 bg-white text-gray-600 text-sm hidden border-t border-gray-100">
+                                    {{ $faq->answer }}
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                            <p class="text-gray-500 text-sm italic">No FAQs available at the moment.</p>
+                            @endforelse
                         </div>
                     </div>
 
-                    <div class="gradient-bg p-4 rounded-lg border border-secondary">
-                        <h3 class="text-base font-semibold text-text mb-2">Need Help?</h3>
-                        <p class="text-gray-600 text-sm mb-3">24/7 customer support available.</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="tel:+919499658115"
-                                class="bg-secondary text-white py-2 rounded text-xs text-center hover:bg-gold transition">Call</a>
-                            <a href="mailto:support@ZUBEEE.com"
-                                class="bg-gray-600 text-white py-2 rounded text-xs text-center hover:bg-gray-700 transition">Email</a>
+                    <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 mt-6">
+                        <h3 class="text-base font-bold text-text mb-2">Need Help?</h3>
+                        <p class="text-gray-600 text-sm mb-4">24/7 customer support available.</p>
+                        <div class="flex gap-3">
+                            <a href="tel:{{ $site_settings->get('phone') }}"
+                                class="flex-1 bg-[#a8894d] text-white py-2.5 rounded text-sm font-medium text-center hover:bg-[#8f7543] transition shadow-sm">
+                                Call
+                            </a>
+                            <a href="mailto:{{ $site_settings->get('contact_email') }}"
+                                class="flex-1 bg-[#4b5563] text-white py-2.5 rounded text-sm font-medium text-center hover:bg-[#374151] transition shadow-sm">
+                                Email
+                            </a>
                         </div>
                     </div>
+                </div>
+            </div>
+
+
                 </div>
             </div>
             @endif
@@ -309,7 +498,7 @@
                             @for($i = 1; $i <= 5; $i++)
                                 <button type="button"
                                     class="star-rating text-2xl text-yellow-400 hover:text-yellow-400 transition-colors"
-                                    data-value="{{ $i }}">★</button>
+                                    data-value="{{ $i }}" onclick="document.getElementById('ratingValue').value = {{ $i }}; updateStars({{ $i }})">★</button>
                             @endfor
                         </div>
                         <input type="hidden" name="rating" id="ratingValue" value="5">
@@ -333,7 +522,7 @@
                         <textarea name="feedback"
                             class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text text-sm"
                             rows="3"
-                            placeholder="Share your experience...">I recently booked the Bali Tropical Escape and had an amazing time. The accommodations were excellent and the tour guides were very knowledgeable. The only suggestion I have is to include more vegetarian meal options.</textarea>
+                            placeholder="Share your experience..."></textarea>
                         <div class="text-red-500 text-xs mt-1 hidden" id="feedbackError"></div>
                     </div>
 
@@ -370,51 +559,44 @@
                 <h2 class="text-lg font-bold text-text mb-4">About ZUBEEE</h2>
 
                 <div class="space-y-4 text-sm">
-                    @foreach($aboutContent as $about)
                     <div>
-                        <h3 class="text-base font-semibold text-text mb-2">{{ $about->title }}</h3>
-                        <p class="text-gray-600 text-sm">{{ $about->content }}</p>
+                        <h3 class="text-base font-semibold text-text mb-2">Our Mission</h3>
+                        <p class="text-gray-600 text-sm">{{ $aboutData['mission'] ?? 'To inspire and enable people to explore the world.' }}</p>
                     </div>
-                    @endforeach
+                    
+                    <div>
+                        <h3 class="text-base font-semibold text-text mb-2">Who We Are</h3>
+                        <p class="text-gray-600 text-sm">{{ $aboutData['description'] ?? 'We are a premier travel agency dedicated to creating unforgettable experiences.' }}</p>
+                    </div>
 
+                    @if(!empty($aboutData['values']))
+                    <div>
+                        <h3 class="text-base font-semibold text-text mb-2">Our Core Values</h3>
+                        <ul class="list-disc pl-4 text-gray-600 space-y-1">
+                            @foreach($aboutData['values'] as $value)
+                                <li>{{ $value }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
 
+                    @if(!empty($aboutData['why_choose']))
                     <div class="bg-secondary text-white p-4 rounded-lg">
                         <h3 class="text-base font-bold mb-3">Why Choose ZUBEEE?</h3>
                         <div class="space-y-2 text-sm">
+                            @foreach($aboutData['why_choose'] as $reason)
                             <div class="flex items-center">
                                 <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                <span>25+ years experience</span>
+                                <span>{{ $reason }}</span>
                             </div>
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>150+ destinations</span>
-                            </div>
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>10,000+ travelers</span>
-                            </div>
-                            <div class="flex items-center">
-                                <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span>24/7 support</span>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
             @endif
@@ -455,7 +637,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-text mb-1">Contact Number</label>
-                    <input type="tel" name="contact" required value="+1 234 567 8900"
+                    <input type="tel" name="contact" required value="{{ $site_settings->get('phone') ?? '+1 234 567 8900' }}"
                         class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text"
                         placeholder="Enter your phone number">
                     <div class="text-red-500 text-xs mt-1 hidden" id="partnerContactError"></div>
@@ -1034,6 +1216,94 @@
                 if (e.target === partnerModal) {
                     partnerModal.classList.add('modal-hidden');
                     document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // Invoice Download Alert Function
+        function showInvoiceAlert(event) {
+            // Let the default link behavior happen (download will start)
+            // Show alert after a short delay
+            setTimeout(() => {
+                Swal.fire({
+                    title: 'Invoice Downloaded!',
+                    text: 'Your invoice is being downloaded. Please check your downloads folder.',
+                    icon: 'success',
+                    confirmButtonColor: '#17320b',
+                    confirmButtonText: 'OK',
+                    timer: 3000
+                });
+            }, 500);
+        }
+
+        // Booking Details Modal Functionality
+        const bookingDetailsModal = document.getElementById('bookingDetailsModal');
+        const closeBookingModalBtn = document.getElementById('closeBookingModal');
+        const bookingDetailsBtns = document.querySelectorAll('.booking-details-btn');
+
+        // Booking data from server
+        const bookingsData = @json($rawBookings);
+
+        bookingDetailsBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const bookingId = parseInt(this.getAttribute('data-booking-id'));
+                const booking = bookingsData.find(b => b.id === bookingId);
+                
+                if (booking) {
+                    // Populate modal with booking data
+                    document.getElementById('modal-booking-id').textContent = 'ZB' + String(booking.id).padStart(6, '0');
+                    document.getElementById('modal-package-name').textContent = booking.package?.name || 'N/A';
+                    document.getElementById('modal-duration').textContent = booking.package?.duration || 'N/A';
+                    document.getElementById('modal-location').textContent = booking.package?.location || 'N/A';
+                    document.getElementById('modal-travel-date').textContent = booking.travel_date || 'Flexible';
+                    document.getElementById('modal-travelers').textContent = booking.travellers + ' Adults';
+                    document.getElementById('modal-customer-name').textContent = booking.user?.name || '{{ auth()->user()->name }}';
+                    document.getElementById('modal-customer-email').textContent = booking.user?.email || '{{ auth()->user()->email }}';
+                    document.getElementById('modal-customer-phone').textContent = booking.phone || 'N/A';
+                    document.getElementById('modal-total-amount').textContent = '₹' + Number(booking.total_amount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    
+                    // Set status
+                    const statusEl = document.getElementById('modal-status');
+                    statusEl.textContent = booking.status.charAt(0).toUpperCase() + booking.status.slice(1);
+                    statusEl.className = 'booking-status rounded-full';
+                    
+                    // Add status class
+                    if (booking.status === 'confirmed') {
+                        statusEl.classList.add('bg-green-800', 'text-green-100');
+                    } else if (booking.status === 'pending') {
+                        statusEl.classList.add('bg-yellow-800', 'text-yellow-100');
+                    } else if (booking.status === 'cancelled') {
+                        statusEl.classList.add('bg-red-800', 'text-red-100');
+                    } else {
+                        statusEl.classList.add('bg-gray-800', 'text-gray-100');
+                    }
+                    
+                    // Show/hide special requests
+                    if (booking.special_requests) {
+                        document.getElementById('modal-special-requests').textContent = booking.special_requests;
+                        document.getElementById('modal-special-requests-section').classList.remove('hidden');
+                    } else {
+                        document.getElementById('modal-special-requests-section').classList.add('hidden');
+                    }
+                    
+                    // Show modal
+                    bookingDetailsModal.classList.remove('modal-hidden');
+                }
+            });
+        });
+
+        // Close modal
+        if (closeBookingModalBtn) {
+            closeBookingModalBtn.addEventListener('click', function() {
+                bookingDetailsModal.classList.add('modal-hidden');
+            });
+        }
+
+        // Close modal on overlay click
+        if (bookingDetailsModal) {
+            bookingDetailsModal.addEventListener('click', function(e) {
+                if (e.target === bookingDetailsModal) {
+                    bookingDetailsModal.classList.add('modal-hidden');
                 }
             });
         }

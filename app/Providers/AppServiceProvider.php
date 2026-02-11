@@ -40,5 +40,24 @@ class AppServiceProvider extends ServiceProvider
                 // Silently ignore errors during migrations
             }
         });
+
+        // Override Mail Config at Runtime (Global)
+        try {
+            if (\Schema::hasTable('settings')) {
+                $settings = \App\Models\Setting::all()->pluck('value', 'key');
+                if ($settings->has('mail_host') && !empty($settings->get('mail_host'))) {
+                    config([
+                        'mail.mailers.smtp.host' => $settings->get('mail_host'),
+                        'mail.mailers.smtp.port' => $settings->get('mail_port'),
+                        'mail.mailers.smtp.username' => $settings->get('mail_username'),
+                        'mail.mailers.smtp.password' => $settings->get('mail_password'),
+                        'mail.from.address' => $settings->get('contact_email'),
+                        'mail.from.name' => $settings->get('site_name'),
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently ignore errors during migrations
+        }
     }
 }

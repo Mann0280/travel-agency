@@ -82,7 +82,6 @@ class Agency extends Authenticatable
 
     protected $casts = [
         'is_verified' => 'boolean',
-        'password' => 'hashed',
         'commission_percentage' => 'float',
         'rating' => 'float',
     ];

@@ -50,5 +50,8 @@ Route::get('/agency/{agency}/{package}', [AgencyDetailsController::class, 'show'
 // Package show route
 Route::get('/package/{package}', [PackageDetailsController::class, 'show'])->name('package.show');
 
+// API route for tracking button clicks
+Route::post('/api/track-button-click', [PackageDetailsController::class, 'trackButtonClick'])->name('track.button.click');
+
 // Public Content Routes
 Route::get('/info/{type}', [ContentController::class, 'show'])->name('content.show');

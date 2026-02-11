@@ -8,17 +8,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', ($site_settings->get('site_name') ?? 'ZUBEEE') . ' - Tours & Travels')</title>
+    <title>@yield('title', ($site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE') . ' - Tours & Travels')</title>
     <meta name="description"
-        content="{{ $site_settings->get('site_description') ?? 'ZUBEEE Tours & Travels - Your trusted partner for unforgettable travel experiences.' }}">
-    <meta name="keywords" content="{{ $site_settings->get('site_keywords') ?? 'travel, tours, vacation, packages, adventure, holiday' }}">
+        content="{{ $site_settings->get('meta_description') ?? 'ZUBEEE Tours & Travels - Your trusted partner for unforgettable travel experiences.' }}">
+    <meta name="keywords" content="{{ $site_settings->get('meta_keywords') ?? 'travel, tours, vacation, packages, adventure, holiday' }}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{ $site_settings->get('site_name') ?? 'ZUBEEE' }} - Tours & Travels">
-    <meta property="og:description" content="{{ $site_settings->get('site_description') ?? 'Your trusted partner for unforgettable travel experiences' }}">
+    <meta property="og:title" content="{{ $site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE' }} - Tours & Travels">
+    <meta property="og:description" content="{{ $site_settings->get('meta_description') ?? 'Your trusted partner for unforgettable travel experiences' }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="{{ asset('assets/images/og-image.jpg') }}">
+    <meta property="og:image" content="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/og-image.jpg') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,18 +26,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        forest: '#17320b',
-                        gold: '#a8894d',
+                        forest: 'var(--primary-color)',
+                        gold: 'var(--secondary-color)',
                         champagne: '#fdfbf7',
                         slate: '#57688a',
-                        primary: '#17320b', // Legacy support
-                        secondary: '#a8894d', // Legacy support
+                        primary: 'var(--primary-color)', // Legacy support
+                        secondary: 'var(--secondary-color)', // Legacy support
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -50,6 +51,13 @@
             }
         }
     </script>
+    
+    <style>
+        :root {
+            --primary-color: {{ $site_settings->get('primary_color') ?? '#17320b' }};
+            --secondary-color: {{ $site_settings->get('secondary_color') ?? '#a8894d' }};
+        }
+    </style>
 
     <!-- Swiper JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -68,7 +76,7 @@
     <style>
         body {
             background-color: #fdfbf7;
-            color: #17320b;
+            color: var(--primary-color);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
@@ -116,7 +124,7 @@
             left: 0;
             width: 24px;
             height: 2px;
-            background: #17320b;
+            background: var(--primary-color);
             transform: rotate(0);
             transition: all 0.5s;
         }
@@ -200,7 +208,7 @@
             left: 50%;
             width: 0;
             height: 2px;
-            background-color: #a8894d;
+            background-color: var(--secondary-color);
             transition: all 0.3s ease;
             transform: translateX(-50%);
         }
@@ -225,8 +233,8 @@
         }
 
         .auth-btn-primary {
-            background: linear-gradient(135deg, #a8894d, #8b6a42);
-            border-color: #a8894d;
+            background: linear-gradient(135deg, var(--secondary-color), #8b6a42);
+            border-color: var(--secondary-color);
         }
 
         .auth-btn-primary:hover {
@@ -235,12 +243,12 @@
         }
 
         .auth-btn-secondary {
-            border-color: #a8894d;
-            color: #a8894d;
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
         }
 
         .auth-btn-secondary:hover {
-            background-color: #a8894d;
+            background-color: var(--secondary-color);
             color: white;
         }
 
@@ -261,7 +269,7 @@
             left: 0;
             width: 30px;
             height: 3px;
-            background: #103605ff;
+            background: var(--primary-color);
             border-radius: 2px;
             transition: all 0.3s ease;
         }
@@ -435,7 +443,7 @@
 
         .swiper-pagination-bullet-active {
             opacity: 1;
-            background: #a8894d !important;
+            background: var(--secondary-color) !important;
         }
     </style>
     
