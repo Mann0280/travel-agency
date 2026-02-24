@@ -30,6 +30,24 @@
     <form id="packageForm" action="{{ route('admin.packages.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
+        <!-- Validation Errors -->
+        @if ($errors->any())
+            <div class="mb-8 p-6 bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-sm">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-500 mr-2 text-xl"></i>
+                    <h3 class="text-lg font-bold text-red-800">Please correct the following errors:</h3>
+                </div>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                    @foreach ($errors->all() as $error)
+                        <li class="flex items-start text-red-700 text-sm">
+                            <i class="fas fa-circle text-[6px] mt-1.5 mr-2 shrink-0"></i>
+                            {{ $error }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        
          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <!-- Left Column: Main Content (8/12) -->
             <div class="lg:col-span-8 space-y-8">
@@ -64,8 +82,10 @@
                                 <label class="form-label text-gray-700">To (Location) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input type="text" name="location" class="form-input pl-11" required value="{{ old('location') }}" placeholder="e.g., Manali, Himachal Pradesh">
+                                    <input type="text" name="location" class="form-input pl-11 @error('location') border-red-500 @enderror" required value="{{ old('location') }}" placeholder="e.g., Manali, Himachal Pradesh">
                                 </div>
+                                @error('location') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
                             </div>
                             <div>
                                 <label class="form-label text-gray-700">Duration Text <span class="text-red-500">*</span></label>
@@ -177,7 +197,7 @@
                                     <span class="text-[10px] text-gray-400">Mark as featured package</span>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="featured" value="1" class="sr-only peer" {{ old('featured') ? 'checked' : '' }}>
+                                    <input type="checkbox" name="is_featured" value="1" class="sr-only peer" {{ old('is_featured') ? 'checked' : '' }}>
                                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-forest/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-forest"></div>
                                 </label>
                             </div>

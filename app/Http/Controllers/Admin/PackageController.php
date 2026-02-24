@@ -130,8 +130,19 @@ class PackageController extends Controller
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
-        $data['is_featured'] = $request->boolean('featured');
+        $data['is_featured'] = $request->boolean('is_featured');
         $data['is_approved'] = true;
+        
+        // Ensure arrays are initialized if not present
+        $data['departure_cities'] = $request->input('departure_cities', []);
+        $data['available_months'] = $request->input('available_months', []);
+        $data['itinerary'] = $request->input('itinerary', []);
+        $data['inclusions'] = $request->input('inclusions', []);
+        $data['exclusions'] = $request->input('exclusions', []);
+        $data['things_to_carry'] = $request->input('things_to_carry', []);
+        $data['terms_conditions'] = $request->input('terms_conditions', []);
+        $data['contact_info'] = $request->input('contact_info', []);
+        $data['branches'] = $request->input('branches', []);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('packages', 'public');
@@ -183,7 +194,18 @@ class PackageController extends Controller
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
-        $data['is_featured'] = $request->boolean('featured');
+        $data['is_featured'] = $request->boolean('is_featured');
+        
+        // Ensure arrays are initialized if not present
+        $data['departure_cities'] = $request->input('departure_cities', []);
+        $data['available_months'] = $request->input('available_months', []);
+        $data['itinerary'] = $request->input('itinerary', []);
+        $data['inclusions'] = $request->input('inclusions', []);
+        $data['exclusions'] = $request->input('exclusions', []);
+        $data['things_to_carry'] = $request->input('things_to_carry', []);
+        $data['terms_conditions'] = $request->input('terms_conditions', []);
+        $data['contact_info'] = $request->input('contact_info', []);
+        $data['branches'] = $request->input('branches', []);
 
         if ($request->hasFile('image_upload')) {
             // Delete old image if it exists and is not a URL

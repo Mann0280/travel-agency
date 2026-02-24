@@ -75,16 +75,18 @@ class AccountContentController extends Controller
             return back()->withErrors(['error' => 'Please add at least 3 values and 3 reasons to choose us.'])->withInput();
         }
 
-        $about = AccountContent::where('slug', 'about')->first();
-        $about->update([
-            'data' => [
-                'mission' => $validated['mission'],
-                'description' => $validated['description'],
-                'values' => array_values($values),
-                'why_choose' => array_values($why_choose),
-                'updated_at' => now()->toDateTimeString()
+        AccountContent::updateOrCreate(
+            ['slug' => 'about'],
+            [
+                'data' => [
+                    'mission' => $validated['mission'],
+                    'description' => $validated['description'],
+                    'values' => array_values($values),
+                    'why_choose' => array_values($why_choose),
+                    'updated_at' => now()->toDateTimeString()
+                ]
             ]
-        ]);
+        );
 
         return redirect()->route('admin.account-content.about')->with('success', 'About Us content updated successfully!');
     }
@@ -192,18 +194,20 @@ class AccountContentController extends Controller
             return back()->withErrors(['error' => 'Please add at least 2 benefits and 2 requirements.'])->withInput();
         }
 
-        $partner = AccountContent::where('slug', 'partner')->first();
-        $partner->update([
-            'data' => [
-                'description' => $validated['description'],
-                'apply_button_text' => $validated['apply_button_text'],
-                'contact_email' => $validated['contact_email'],
-                'contact_phone' => $validated['contact_phone'],
-                'benefits' => array_values($benefits),
-                'requirements' => array_values($requirements),
-                'updated_at' => now()->toDateTimeString()
+        AccountContent::updateOrCreate(
+            ['slug' => 'partner'],
+            [
+                'data' => [
+                    'description' => $validated['description'],
+                    'apply_button_text' => $validated['apply_button_text'],
+                    'contact_email' => $validated['contact_email'],
+                    'contact_phone' => $validated['contact_phone'],
+                    'benefits' => array_values($benefits),
+                    'requirements' => array_values($requirements),
+                    'updated_at' => now()->toDateTimeString()
+                ]
             ]
-        ]);
+        );
 
         return redirect()->route('admin.account-content.partner')->with('success', 'Partner content updated successfully!');
     }
@@ -234,13 +238,15 @@ class AccountContentController extends Controller
             'default_feedback' => 'required|string',
         ]);
 
-        $settings = AccountContent::where('slug', 'feedback_settings')->first();
-        $settings->update([
-            'data' => [
-                'default_feedback' => $validated['default_feedback'],
-                'updated_at' => now()->toDateTimeString()
+        AccountContent::updateOrCreate(
+            ['slug' => 'feedback_settings'],
+            [
+                'data' => [
+                    'default_feedback' => $validated['default_feedback'],
+                    'updated_at' => now()->toDateTimeString()
+                ]
             ]
-        ]);
+        );
 
         return redirect()->route('admin.account-content.feedback')->with('success', 'Feedback settings updated!');
     }

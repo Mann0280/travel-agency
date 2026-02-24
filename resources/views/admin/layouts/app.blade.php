@@ -306,6 +306,39 @@
             <!-- Scrollable Content Area -->
             <div class="content-area">
                 <main class="p-4 md:p-8">
+                    <!-- Session Messages -->
+                    @if(session('success'))
+                        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg shadow-sm flex items-center justify-between animate-fade-in-down">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 mr-3">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-green-800">{{ session('success') }}</p>
+                                </div>
+                            </div>
+                            <button onclick="this.parentElement.remove()" class="text-green-500 hover:text-green-700 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm flex items-center justify-between animate-fade-in-down">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 mr-3">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-red-800">{{ session('error') }}</p>
+                                </div>
+                            </div>
+                            <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    @endif
+
                     @yield('content')
                 </main>
             </div>
