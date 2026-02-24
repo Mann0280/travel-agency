@@ -59,6 +59,16 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Apply Button Text</label>
                         <input type="text" name="apply_button_text" value="{{ $partnerData['apply_button_text'] ?? 'Apply Now' }}" required class="form-input">
                     </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                            <input type="email" name="contact_email" value="{{ $partnerData['contact_email'] ?? '' }}" class="form-input">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+                            <input type="text" name="contact_phone" value="{{ $partnerData['contact_phone'] ?? '' }}" class="form-input">
+                        </div>
+                    </div>
                     <button type="submit" class="btn btn-primary w-full shadow-sm">
                         <i class="fas fa-save mr-2"></i> Update Partner Content
                     </button>

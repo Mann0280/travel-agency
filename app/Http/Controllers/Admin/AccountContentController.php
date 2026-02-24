@@ -200,8 +200,8 @@ class AccountContentController extends Controller
                 'data' => [
                     'description' => $validated['description'],
                     'apply_button_text' => $validated['apply_button_text'],
-                    'contact_email' => $validated['contact_email'],
-                    'contact_phone' => $validated['contact_phone'],
+                    'contact_email' => $validated['contact_email'] ?? null,
+                    'contact_phone' => $validated['contact_phone'] ?? null,
                     'benefits' => array_values($benefits),
                     'requirements' => array_values($requirements),
                     'updated_at' => now()->toDateTimeString()
