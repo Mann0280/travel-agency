@@ -505,15 +505,47 @@
                         <div class="text-red-500 text-xs mt-1 hidden" id="ratingError"></div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-text mb-1">Category</label>
-                        <select name="category"
-                            class="w-full form-input-mobile border border-secondary rounded-lg bg-white text-text text-sm">
-                            <option value="">Select Category</option>
-                            @foreach($feedbackCategories as $cat)
-                                <option value="{{ $cat->key }}">{{ $cat->label }}</option>
-                            @endforeach
-                        </select>
+                    <div x-data="{ 
+                        open: false, 
+                        selected: [],
+                        get label() {
+                            if (this.selected.length === 0) return 'Select Categories';
+                            if (this.selected.length === 1) {
+                                // Find the label for the first selected item
+                                const checkbox = document.querySelector(`input[value='${this.selected[0]}']`);
+                                return checkbox ? checkbox.closest('label').querySelector('span').textContent.trim() : '1 Category Selected';
+                            }
+                            return `${this.selected.length} Categories Selected`;
+                        }
+                    }">
+                        <label class="block text-sm font-medium text-text mb-2">Category (Select one or more)</label>
+                        <div class="relative">
+                            <button type="button" @click="open = !open" 
+                                class="w-full flex items-center justify-between form-input-mobile border border-secondary rounded-lg bg-white text-text text-sm text-left px-3 py-2.5 shadow-sm">
+                                <span x-text="label" :class="selected.length === 0 ? 'text-gray-400' : 'text-text font-medium'"></span>
+                                <svg class="w-4 h-4 text-secondary transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div x-show="open" @click.away="open = false" 
+                                class="absolute z-50 w-full mt-1 bg-white border border-secondary rounded-lg shadow-xl max-h-60 overflow-y-auto"
+                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="transform opacity-0 scale-95"
+                                x-transition:enter-end="transform opacity-100 scale-100">
+                                <div class="p-2 space-y-1">
+                                    @foreach($feedbackCategories as $cat)
+                                        <label class="flex items-center px-3 py-2 rounded-md hover:bg-secondary/10 cursor-pointer transition-colors group">
+                                            <input type="checkbox" name="category[]" value="{{ $cat->key }}" 
+                                                class="w-4 h-4 rounded border-secondary text-secondary focus:ring-secondary mr-3"
+                                                x-model="selected">
+                                            <span class="text-sm text-text group-hover:text-secondary-dark">{{ $cat->label }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
                         <div class="text-red-500 text-xs mt-1 hidden" id="categoryError"></div>
                     </div>
 

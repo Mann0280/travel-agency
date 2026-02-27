@@ -25,6 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\VisitorTrackingMiddleware::class,
+        ]);
+        
         $middleware->alias([
             'auth.check' => \App\Http\Middleware\EnsureUserIsLoggedIn::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,

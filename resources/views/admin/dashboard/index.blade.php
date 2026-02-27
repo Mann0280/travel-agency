@@ -130,6 +130,64 @@
     </div>
 </div>
 
+<!-- Visitor Statistics Section -->
+<div class="mb-8">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-1 h-6 bg-forest rounded-full"></div>
+        <h2 class="text-xl font-black text-forest font-poppins">Visitor Insights</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Today's Visitors -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-green-500 hover:shadow-xl transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate uppercase tracking-wider mb-1">Today's Visitors</p>
+                    <h3 class="text-2xl font-black text-forest font-poppins">{{ number_format($stats['today_visitors']) }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                    <i class="fas fa-chart-line text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Live Tracking</span>
+                <span class="text-[10px] text-slate font-medium">Unique IP addresses</span>
+            </div>
+        </div>
+
+        <!-- Monthly Visitors -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate uppercase tracking-wider mb-1">This Month</p>
+                    <h3 class="text-2xl font-black text-forest font-poppins">{{ number_format($stats['this_month_visitors']) }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                    <i class="fas fa-calendar-alt text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{{ date('F Y') }}</span>
+            </div>
+        </div>
+
+        <!-- Total Unique Visitors -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition-all">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate uppercase tracking-wider mb-1">Total Unique Visitors</p>
+                    <h3 class="text-2xl font-black text-forest font-poppins">{{ number_format($stats['total_visitors']) }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">All Time</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
     <!-- Revenue Overview Chart -->
     <div class="lg:col-span-2">

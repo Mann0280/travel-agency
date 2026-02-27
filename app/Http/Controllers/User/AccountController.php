@@ -139,7 +139,8 @@ class AccountController extends Controller
         // Validate input
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'category' => 'required|string',
+            'category' => 'required|array|min:1',
+            'category.*' => 'string',
             'feedback' => 'required|string|max:1000',
             'recommend' => 'required|string|in:yes,no,maybe'
         ]);
@@ -148,7 +149,7 @@ class AccountController extends Controller
         Feedback::create([
             'user_id' => Auth::id(),
             'rating' => $validated['rating'],
-            'category' => $validated['category'],
+            'category' => implode(', ', $validated['category']),
             'message' => $validated['feedback'],
             'recommend' => $validated['recommend']
         ]);
