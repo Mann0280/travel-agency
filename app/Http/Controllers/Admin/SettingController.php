@@ -11,7 +11,8 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::all();
-        return view('admin.settings.index', compact('settings'));
+        $destinations = \App\Models\Destination::all();
+        return view('admin.settings.index', compact('settings', 'destinations'));
     }
 
     public function update(Request $request)
@@ -34,7 +35,8 @@ class SettingController extends Controller
             'meta_title', 'meta_description', 'meta_keywords',
             'mail_host', 'mail_port', 'mail_username', 'mail_password',
             'stripe_key', 'stripe_secret',
-            'facebook_url', 'instagram_url', 'twitter_url'
+            'facebook_url', 'instagram_url', 'twitter_url',
+            'package_categories'
         ];
 
         foreach ($keys as $key) {

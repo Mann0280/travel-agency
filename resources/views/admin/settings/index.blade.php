@@ -59,6 +59,9 @@
                     <button data-tab="social" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
                         <i class="fas fa-share-alt w-5 mr-3"></i> Social Media
                     </button>
+                    <button data-tab="destinations" class="sidebar-link w-full flex items-center p-3 rounded-lg text-sm font-medium text-gray-600 transition">
+                        <i class="fas fa-map-marker-alt w-5 mr-3"></i> Destinations
+                    </button>
                 </nav>
             </div>
         </div>
@@ -317,6 +320,47 @@
                                 <div>
                                     <label class="form-label">Twitter URL</label>
                                     <input type="url" name="twitter_url" class="form-input" value="{{ \App\Models\Setting::get('twitter_url') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="destinations-tab" class="tab-pane space-y-6 hidden">
+                        <div class="card">
+                            <h2 class="text-xl font-bold text-[#17320b] mb-6 border-b pb-4">Destination Settings</h2>
+                            
+                            <!-- Destination Categories -->
+                            <div class="mb-8">
+                                <label class="form-label font-bold text-gray-700">Package Categories</label>
+                                <p class="text-xs text-gray-500 mb-2">Enter categories separated by commas (e.g., Adventure, Beach, Hill Station)</p>
+                                <textarea name="package_categories" class="form-input" rows="3" placeholder="Adventure, Beach, Cultural, trekking, nature, heritage, religious">{{ \App\Models\Setting::get('package_categories', 'adventure, hill-station, cultural, beach, desert, trekking, nature, heritage, religious') }}</textarea>
+                            </div>
+
+                            <hr class="my-6">
+
+                            <!-- Destination Management -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-800">Quick Destination List</h3>
+                                    <a href="{{ route('admin.destinations.create') }}" class="btn btn-outline text-xs">
+                                        <i class="fas fa-plus mr-2"></i> Add Detail Destination
+                                    </a>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    @foreach($destinations as $dest)
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                                            <div class="flex items-center overflow-hidden">
+                                                <i class="fas fa-map-pin text-gold mr-3 flex-shrink-0"></i>
+                                                <span class="text-sm font-medium truncate">{{ $dest->name }}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <a href="{{ route('admin.destinations.edit', $dest->id) }}" class="text-gray-400 hover:text-gold transition-colors">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

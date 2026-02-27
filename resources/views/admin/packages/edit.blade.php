@@ -351,11 +351,16 @@
                              <h3 class="text-md font-bold text-gray-900">Organization</h3>
                         </div>
                         <div class="p-5 space-y-4">
-                            <div>
+                             <div>
                                 <label class="form-label text-xs">Category</label>
                                 <select name="category" class="form-select w-full" required>
-                                    @foreach(['adventure' => 'Adventure', 'hill-station' => 'Hill Station', 'cultural' => 'Cultural', 'beach' => 'Beach', 'desert' => 'Desert', 'trekking' => 'Trekking', 'nature' => 'Nature', 'heritage' => 'Heritage', 'religious' => 'Religious'] as $val => $label)
-                                        <option value="{{ $val }}" {{ old('category', $package->category) == $val ? 'selected' : '' }}>{{ $label }}</option>
+                                    <option value="">Select Category</option>
+                                    @php
+                                        $categories = explode(',', \App\Models\Setting::get('package_categories', 'adventure, hill-station, cultural, beach, desert, trekking, nature, heritage, religious'));
+                                    @endphp
+                                    @foreach($categories as $cat)
+                                        @php $cat = trim($cat); @endphp
+                                        <option value="{{ strtolower($cat) }}" {{ old('category', $package->category) == strtolower($cat) ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
                                     @endforeach
                                 </select>
                             </div>

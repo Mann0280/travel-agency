@@ -65,6 +65,13 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.destinations.index') }}"
+                    class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.destinations.*') ? 'active-menu' : '' }}">
+                    <i class="fas fa-map-marker-alt w-6 mr-3"></i>
+                    <span class="text-sm">Destinations</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.agencies.index') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.agencies.*') ? 'active-menu' : '' }}">
                     <i class="fas fa-building w-6 mr-3"></i>
