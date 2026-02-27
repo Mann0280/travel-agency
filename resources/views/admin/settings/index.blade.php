@@ -145,7 +145,12 @@
                     <!-- Appearance Settings -->
                     <div id="appearance-tab" class="tab-pane space-y-6 hidden">
                         <div class="card">
-                            <h2 class="text-xl font-bold text-[#17320b] mb-6 border-b pb-4">Appearance Settings</h2>
+                            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                                <h2 class="text-xl font-bold text-[#17320b]">Appearance Settings</h2>
+                                <button type="button" onclick="setBrandingDefaults()" class="btn btn-outline text-xs py-2">
+                                    <i class="fas fa-undo mr-2"></i> Set Branding Defaults
+                                </button>
+                            </div>
                             <div class="space-y-6">
                                 <div>
                                     <label class="form-label">Site Logo</label>
@@ -382,6 +387,23 @@
             retVal += charset.charAt(Math.floor(Math.random() * charset.length));
         }
         document.getElementById(id).value = retVal;
+    }
+
+    function setBrandingDefaults() {
+        if (confirm('Are you sure you want to reset branding colors to default (#17320b and #a8894d)?')) {
+            const primaryInput = document.querySelector('input[name="primary_color"]');
+            const secondaryInput = document.querySelector('input[name="secondary_color"]');
+            
+            if (primaryInput) {
+                primaryInput.value = '#17320b';
+                primaryInput.dispatchEvent(new Event('input'));
+            }
+            
+            if (secondaryInput) {
+                secondaryInput.value = '#a8894d';
+                secondaryInput.dispatchEvent(new Event('input'));
+            }
+        }
     }
 </script>
 @endsection

@@ -33,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.check' => \App\Http\Middleware\EnsureUserIsLoggedIn::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'agency' => \App\Http\Middleware\AgencyMiddleware::class,
+            'package.auth' => \App\Http\Middleware\PackageAccessMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -18,7 +18,7 @@ Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard'
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // Package Details Route
-Route::get('/packages/{package}', [PackageDetailsController::class, 'show'])->name('package.show');
+Route::middleware('package.auth')->get('/packages/{package}', [PackageDetailsController::class, 'show'])->name('package.show');
 
 // Agency public routes
 Route::get('/agency', [AgencyController::class, 'index'])->name('agency');

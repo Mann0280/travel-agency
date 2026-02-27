@@ -38,4 +38,4 @@ Route::middleware('auth.check')->group(function () {
 
 
 // API route for tracking button clicks
-Route::post('/api/track-button-click', [PackageDetailsController::class, 'trackButtonClick'])->name('track.button.click');
+Route::middleware('package.auth')->post('/api/track-button-click', [PackageDetailsController::class, 'trackButtonClick'])->name('track.button.click');

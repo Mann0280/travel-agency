@@ -41,6 +41,12 @@ class AuthController extends Controller
             // Regenerate session
             $request->session()->regenerate();
             
+            // Redirect to specifically requested package if session flag exists
+            if ($request->session()->has('redirect_package')) {
+                $packageId = $request->session()->pull('redirect_package');
+                return redirect()->route('package.show', $packageId)->with('login_success', 'Welcome back! You can now view the package details.');
+            }
+            
             return redirect()->intended(route('account'))->with('login_success', 'Welcome back! You have successfully logged in.');
         }
 
@@ -82,6 +88,12 @@ class AuthController extends Controller
 
         // Log in the user
         Auth::guard('web')->login($user);
+
+        // Redirect to specifically requested package if session flag exists
+        if ($request->session()->has('redirect_package')) {
+            $packageId = $request->session()->pull('redirect_package');
+            return redirect()->route('package.show', $packageId)->with('success', 'Registration successful! You can now view the package details.');
+        }
 
         // Redirect to account
         return redirect()->route('account')->with('success', 'Registration successful! Welcome to ZUBEEE.');
