@@ -58,6 +58,7 @@
         </div>
     </div>
 
+{{-- 
     <!-- Total Bookings Card -->
     <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group hover:border-blue-200">
         <div class="flex items-start justify-between mb-4">
@@ -79,6 +80,7 @@
             </a>
         </div>
     </div>
+    --}}
 
     <!-- Registered Users Card -->
     <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group hover:border-purple-200">
@@ -221,6 +223,7 @@
 
 <!-- Two Column Layout: Recent Bookings & Recent Feedback -->
 <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+{{-- 
     <!-- Recent Bookings Section -->
     <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-lg">
         <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
@@ -257,6 +260,7 @@
             @endforelse
         </div>
     </div>
+    --}}
 
     <!-- Recent Feedback Section -->
     <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-lg">

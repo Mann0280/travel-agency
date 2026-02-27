@@ -86,7 +86,6 @@
                                 </div>
                                 @error('location') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
-                            </div>
                             <div>
                                 <label class="form-label text-gray-700">Duration Text <span class="text-red-500">*</span></label>
                                 <div class="relative">
@@ -95,6 +94,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div>
                             <label class="form-label text-gray-700">Description <span class="text-red-500">*</span></label>
                             <div class="relative">

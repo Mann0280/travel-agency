@@ -119,6 +119,7 @@
                     <span class="text-sm">My Account Content</span>
                 </a>
             </li>
+            {{-- 
             <li>
                 <a href="{{ route('admin.reviews.index') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.reviews.*') ? 'active-menu' : '' }}">
@@ -126,6 +127,7 @@
                     <span class="text-sm">User Reviews</span>
                 </a>
             </li>
+            --}}
             <li>
                 <a href="{{ route('admin.feedback.index') }}"
                     class="flex items-center p-3 rounded-lg hover:bg-white/10 text-white {{ request()->routeIs('admin.feedback.*') ? 'active-menu' : '' }}">
