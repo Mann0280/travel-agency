@@ -103,14 +103,19 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
-                            <input type="tel" name="phone" value="{{ old('phone', $agency->phone) }}" placeholder="+91 ..." class="w-full px-5 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-forest transition-all">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number *</label>
+                            <input type="tel" id="agencyPhone" name="phone" value="{{ old('phone', $agency->phone) }}" required placeholder="+91 ..." class="w-full px-5 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-forest transition-all">
+                            <div class="flex items-center gap-2 mt-1 ml-1">
+                                <input type="checkbox" id="syncWhatsApp" class="w-3 h-3 rounded text-forest focus:ring-forest border-gray-200 cursor-pointer" {{ $agency->phone == $agency->alternate_phone ? 'checked' : '' }}>
+                                <label for="syncWhatsApp" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider cursor-pointer select-none italic">Same as Phone</label>
+                            </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Alt. Phone</label>
-                            <input type="tel" name="alternate_phone" value="{{ old('alternate_phone', $agency->alternate_phone) }}" placeholder="Optional" class="w-full px-5 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-forest transition-all">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">WhatsApp Number *</label>
+                            <input type="tel" id="agencyWhatsApp" name="alternate_phone" value="{{ old('alternate_phone', $agency->alternate_phone) }}" required placeholder="+91 ..." class="w-full px-5 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-forest transition-all" {{ $agency->phone == $agency->alternate_phone ? 'readonly' : '' }}>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -217,6 +222,7 @@
     </form>
 </div>
 
+
 <script>
     function previewImage(input) {
         if (input.files && input.files[0]) {
@@ -229,5 +235,42 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    // WhatsApp Sync Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('agencyPhone');
+        const whatsappInput = document.getElementById('agencyWhatsApp');
+        const syncCheckbox = document.getElementById('syncWhatsApp');
+
+        if (phoneInput && whatsappInput && syncCheckbox) {
+            function performSync() {
+                if (syncCheckbox.checked) {
+                    whatsappInput.value = phoneInput.value;
+                }
+            }
+
+            phoneInput.addEventListener('input', performSync);
+            
+            syncCheckbox.addEventListener('change', function() {
+                performSync();
+                if (this.checked) {
+                    whatsappInput.setAttribute('readonly', true);
+                    whatsappInput.classList.add('bg-gray-50/50', 'text-gray-500');
+                } else {
+                    whatsappInput.removeAttribute('readonly');
+                    whatsappInput.classList.remove('bg-gray-50/50', 'text-gray-500');
+                }
+            });
+
+            // Initial sync if checked
+            if (syncCheckbox.checked) {
+                performSync();
+                whatsappInput.setAttribute('readonly', true);
+                whatsappInput.classList.add('bg-gray-50/50', 'text-gray-500');
+            }
+        }
+    });
 </script>
+
+
 @endsection

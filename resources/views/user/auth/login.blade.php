@@ -70,7 +70,6 @@
         <div class="text-center">
             <div class="flex justify-center items-center space-x-2 mb-4">
                 <span class="text-3xl font-bold text-white tracking-wider">{{ $site_settings->get('site_name', 'ZUBEEE') }}</span>
-                <span class="text-sm text-gray-300 font-medium">Tours & Travels</span>
             </div>
             <h2 class="mt-6 text-4xl font-extrabold text-white">
                 Sign in to your account

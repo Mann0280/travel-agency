@@ -85,7 +85,8 @@
         </div>
         
         <div class="border-t border-gray-600 mt-8 pt-8 text-center text-gray-300">
-            <p>&copy; {{ date('Y') }} {{ $site_settings->get('site_name') ?? 'ZUBEEE' }} Tours & Travels. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} {{ $site_settings->get('site_name') ?? 'ZUBEEE' }}. All rights reserved.</p>
+
         </div>
     </div>
 </footer>

@@ -24,7 +24,7 @@ class Package extends Model
         'destination_id',
         'start_date',
         'end_date',
-        'branches',
+        'agency_id',
         'agency_id',
         'travel_date',
         'location',
@@ -60,7 +60,6 @@ class Package extends Model
         'available_months' => 'array',
         'start_date' => 'date',
         'end_date' => 'date',
-        'branches' => 'array',
     ];
 
     public function destination(): BelongsTo

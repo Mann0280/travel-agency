@@ -275,13 +275,9 @@
                              <h3 class="text-md font-bold text-gray-900">Pricing & Availability</h3>
                         </div>
                         <div class="p-5 space-y-5">
-                             <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-1">Base Price</label>
-                                <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
-                                    <input type="number" name="price" class="form-input pl-8 text-xl font-bold text-forest" required min="0" value="{{ old('price', $package->price) }}">
-                                </div>
-                            </div>
+                             {{-- Base Price Removed as per requirements --}}
+    <input type="hidden" name="price" value="{{ $package->price }}">
+
                             
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -326,22 +322,31 @@
                             </div>
 
                              <div class="pt-2 border-t border-gray-100">
-                                <label class="form-label text-xs block mb-2">Departure Cities</label>
-                                <div id="departureCitiesContainer" class="space-y-2 mb-2">
-                                    @forelse($package->departure_cities ?? [] as $city)
-                                         <div class="flex items-center gap-2 group/city">
-                                            <div class="relative w-full">
-                                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"><i class="fas fa-plane-departure"></i></span>
-                                                <input type="text" name="departure_cities[]" class="form-input text-xs py-1.5 pl-8" value="{{ $city }}">
-                                            </div>
-                                            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 opacity-0 group-hover/city:opacity-100 transition-opacity">
-                                                <i class="fas fa-times"></i>
+                                <label class="form-label text-xs block mb-2">Departure Cities</label>                                 <div id="departureCitiesContainer" class="space-y-2 mb-2">
+                                    @foreach($package->departure_cities ?? [] as $index => $cityData)
+                                         @php
+                                            $cityName = is_array($cityData) ? ($cityData['city'] ?? '') : $cityData;
+                                            $cityPrice = is_array($cityData) ? ($cityData['price'] ?? 0) : 0;
+                                         @endphp
+                                         <div class="flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100 group/city relative">
+                                            <button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -right-2 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm z-10">
+                                                <i class="fas fa-times text-[10px]"></i>
                                             </button>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"><i class="fas fa-plane-departure"></i></span>
+                                                    <input type="text" name="departure_cities[{{ $index }}][city]" class="form-input text-[10px] py-1.5 pl-7" value="{{ $cityName }}" required>
+                                                </div>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">₹</span>
+                                                    <input type="number" name="departure_cities[{{ $index }}][price]" class="form-input text-[10px] py-1.5 pl-6" value="{{ $cityPrice }}" required min="0">
+                                                </div>
+                                            </div>
                                         </div>
-                                    @empty
-                                    @endforelse
+                                    @endforeach
                                 </div>
-                                <button type="button" onclick="addDepartureCity()" class="text-xs text-forest hover:text-forest-light font-bold uppercase tracking-wider flex items-center gap-1">
+                            </div>
+
                                     <i class="fas fa-plus"></i> Add City
                                 </button>
                             </div>
@@ -374,14 +379,10 @@
                             <input type="hidden" name="agency_id" value="{{ $package->agency_id }}">
                         </div>
                     </div>
-                    
-                     <!-- Branches & Contact -->
+                                         <!-- Contact Details -->
                     <div class="card border-0 shadow-sm ring-1 ring-gray-100">
-                         <div class="p-5 border-b border-gray-100 flex justify-between items-center">
-                             <h3 class="text-md font-bold text-gray-900">Branches</h3>
-                             <button type="button" onclick="addBranch()" class="text-xs btn btn-xs btn-outline bg-white border-dashed">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                         <div class="p-5 border-b border-gray-100 items-center">
+                             <h3 class="text-md font-bold text-gray-900">Contact Details</h3>
                         </div>
                         <div class="p-5 space-y-4">
                             <!-- Contact Info -->
@@ -395,32 +396,9 @@
                                     <input type="url" name="contact_info[website]" class="form-input text-xs py-1" value="{{ old('contact_info.website', $package->contact_info['website'] ?? '') }}" required placeholder="e.g., https://agency.com">
                                 </div>
                             </div>
-
-                            <div id="branchesContainer" class="space-y-3">
-                                @foreach($package->branches ?? [] as $index => $branch)
-                                     <div class="branch-item border border-gray-200 rounded-lg p-3 bg-gray-50/50 text-sm relative group">
-                                        <button type="button" onclick="this.closest('.branch-item').remove()" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center gap-2">
-                                                <i class="fas fa-building text-gray-400 text-xs"></i>
-                                                <input type="text" name="branches[{{ $index }}][city]" class="form-input text-xs py-1 bg-white" required value="{{ $branch['city'] ?? '' }}" placeholder="City Name">
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <i class="fas fa-phone text-gray-400 text-xs"></i>
-                                                <input type="text" name="branches[{{ $index }}][phone]" class="form-input text-xs py-1 bg-white" required value="{{ $branch['phone'] ?? '' }}" placeholder="Phone Number">
-                                            </div>
-                                            <textarea name="branches[{{ $index }}][address]" rows="2" class="form-textarea text-xs py-1 bg-white w-full" required placeholder="Full Address">{{ $branch['address'] ?? '' }}</textarea>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                             @if(empty($package->branches) && empty($package->contact_info))
-                                <p class="text-xs text-center text-gray-400 italic">No contact info added.</p>
-                            @endif
                         </div>
                     </div>
+
 
                 </div>
             </div>
@@ -433,18 +411,31 @@
     function addDepartureCity() {
         const container = document.getElementById('departureCitiesContainer');
         const div = document.createElement('div');
-         div.className = 'flex items-center gap-2 group/city';
+        div.className = 'flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100 group/city relative';
         div.innerHTML = `
-            <div class="relative w-full">
-                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"><i class="fas fa-plane-departure"></i></span>
-                <input type="text" name="departure_cities[]" class="form-input text-xs py-1.5 pl-8" placeholder="e.g., Delhi">
-            </div>
-            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 transition-opacity">
-                <i class="fas fa-times"></i>
+            <button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -right-2 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm z-10">
+                <i class="fas fa-times text-[10px]"></i>
             </button>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="relative">
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"><i class="fas fa-plane-departure"></i></span>
+                    <input type="text" name="departure_cities[][city]" class="form-input text-[10px] py-1.5 pl-7" placeholder="City (e.g. Delhi)" required>
+                </div>
+                <div class="relative">
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">₹</span>
+                    <input type="number" name="departure_cities[][price]" class="form-input text-[10px] py-1.5 pl-6" placeholder="Price" required min="0">
+                </div>
+            </div>
         `;
+        
+        // Fix for array naming to group city and price
+        const index = container.querySelectorAll('.group\\/city').length;
+        div.querySelector('input[name="departure_cities[][city]"]').name = `departure_cities[${index}][city]`;
+        div.querySelector('input[name="departure_cities[][price]"]').name = `departure_cities[${index}][price]`;
+        
         container.appendChild(div);
     }
+
 
     function addItem(field) {
         const container = document.getElementById(field + 'Container');
@@ -529,30 +520,6 @@
         container.insertBefore(div, btn);
     }
 
-    let branchCount = {{ count($package->branches ?? []) }};
-    function addBranch() {
-        const container = document.getElementById('branchesContainer');
-        const div = document.createElement('div');
-        div.className = 'branch-item border border-gray-200 rounded-lg p-3 bg-gray-50/50 text-sm relative group';
-        div.innerHTML = `
-            <button type="button" onclick="this.closest('.branch-item').remove()" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-100 transition-opacity">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="space-y-2">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-building text-gray-400 text-xs"></i>
-                    <input type="text" name="branches[${branchCount}][city]" class="form-input text-xs py-1 bg-white" required placeholder="City Name">
-                </div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-phone text-gray-400 text-xs"></i>
-                    <input type="text" name="branches[${branchCount}][phone]" class="form-input text-xs py-1 bg-white" required placeholder="Phone Number">
-                </div>
-                <textarea name="branches[${branchCount}][address]" rows="2" class="form-textarea text-xs py-1 bg-white w-full" required placeholder="Full Address"></textarea>
-            </div>
-        `;
-        container.appendChild(div);
-        branchCount++;
-    }
 </script>
 @endpush
 @endsection

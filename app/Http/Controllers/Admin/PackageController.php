@@ -103,9 +103,13 @@ class PackageController extends Controller
             'location' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'duration' => 'required|string|max:255',
             'from_city' => 'nullable|string|max:255',
+            'departure_cities' => 'required|array|min:1',
+            'departure_cities.*.city' => 'required|string',
+            'departure_cities.*.price' => 'required|numeric|min:0',
+
             'duration_days' => 'required|integer|min:1',
             'agency_id' => 'required|exists:agencies,id',
             'start_date' => 'required|date',
@@ -125,10 +129,6 @@ class PackageController extends Controller
             'contact_info' => 'required|array',
             'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
-            'branches' => 'nullable|array',
-            'branches.*.city' => 'required_with:branches|string',
-            'branches.*.address' => 'required_with:branches|string',
-            'branches.*.phone' => 'required_with:branches|string',
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
@@ -144,7 +144,15 @@ class PackageController extends Controller
         $data['things_to_carry'] = $request->input('things_to_carry', []);
         $data['terms_conditions'] = $request->input('terms_conditions', []);
         $data['contact_info'] = $request->input('contact_info', []);
-        $data['branches'] = $request->input('branches', []);
+
+        // Calculate minimum price from departure cities
+        if (!empty($data['departure_cities'])) {
+            $prices = array_column($data['departure_cities'], 'price');
+            if (!empty($prices)) {
+                $data['price'] = min($prices);
+            }
+        }
+
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('packages', 'public');
@@ -169,9 +177,13 @@ class PackageController extends Controller
             'location' => 'required|string|max:255',
             'description' => 'required|string',
             'image_upload' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'duration' => 'required|string|max:255',
             'from_city' => 'nullable|string|max:255',
+            'departure_cities' => 'required|array|min:1',
+            'departure_cities.*.city' => 'required|string',
+            'departure_cities.*.price' => 'required|numeric|min:0',
+
             'duration_days' => 'required|integer|min:1',
             'agency_id' => 'required|exists:agencies,id',
             'start_date' => 'required|date',
@@ -191,10 +203,6 @@ class PackageController extends Controller
             'contact_info' => 'required|array',
             'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
-            'branches' => 'nullable|array',
-            'branches.*.city' => 'required_with:branches|string',
-            'branches.*.address' => 'required_with:branches|string',
-            'branches.*.phone' => 'required_with:branches|string',
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
@@ -209,7 +217,15 @@ class PackageController extends Controller
         $data['things_to_carry'] = $request->input('things_to_carry', []);
         $data['terms_conditions'] = $request->input('terms_conditions', []);
         $data['contact_info'] = $request->input('contact_info', []);
-        $data['branches'] = $request->input('branches', []);
+
+        // Calculate minimum price from departure cities
+        if (!empty($data['departure_cities'])) {
+            $prices = array_column($data['departure_cities'], 'price');
+            if (!empty($prices)) {
+                $data['price'] = min($prices);
+            }
+        }
+
 
         if ($request->hasFile('image_upload')) {
             // Delete old image if it exists and is not a URL

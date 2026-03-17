@@ -13,7 +13,8 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         $settings = [
-            'site_name' => 'ZUBEEE Tours & Travels',
+            'site_name' => 'ZUBEEE',
+
             'site_url' => 'http://localhost:8000',
             'contact_email' => 'info@zubeee.com',
             'phone' => '+91 123 456 7890',
@@ -23,8 +24,9 @@ class SettingSeeder extends Seeder
             'primary_color' => '#17320b',
             'secondary_color' => '#a8894d',
             'package_categories' => 'adventure, hill-station, cultural, beach, desert, trekking, nature, heritage, religious',
-            'meta_title' => 'ZUBEEE - Tours & Travels',
-            'meta_description' => 'ZUBEEE Tours & Travels - Your trusted partner for unforgettable travel experiences.',
+            'meta_title' => 'ZUBEEE',
+            'meta_description' => 'ZUBEEE - Your trusted partner for unforgettable travel experiences.',
+
             'meta_keywords' => 'travel, tours, vacation, packages, adventure, holiday',
             'site_favicon' => 'logo.PNG',
         ];

@@ -36,8 +36,8 @@
                 <div class="flex justify-center">
                     <a href="{{ route('home') }}" class="flex items-center space-x-2">
                         <span class="text-4xl font-bold text-gray-300">ZUBEEE</span>
-                        <span class="text-sm text-gray-400 mt-2">Tours & Travels</span>
                     </a>
+
                 </div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-100">
                     Create your account

@@ -314,30 +314,31 @@
 
             <!-- Contact -->
             <div id="contact" class="tab-content hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    @foreach ($packageMetadata['contact_info']['branches'] as $branch)
-                        <div class="bg-white p-8 rounded-[2rem] border border-gold/5 shadow-elite">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-10 h-10 bg-forest rounded-xl flex items-center justify-center text-gold">
-                                    <i class="fas fa-building text-sm"></i>
-                                </div>
-                                <h4 class="text-lg font-black text-forest uppercase tracking-tight">{{ $branch['city'] }} Bureau</h4>
-                            </div>
-                            <p class="text-[10px] font-bold text-slate uppercase tracking-widest leading-loose mb-8">
-                                {{ $branch['address'] }}
-                            </p>
-                            <div class="space-y-4">
-                                @foreach ($branch['phones'] as $phone)
-                                    <a href="tel:{{ $phone }}" class="flex items-center gap-4 text-forest hover:text-gold transition-colors group">
-                                        <div class="w-8 h-8 rounded-full border border-gold/20 flex items-center justify-center group-hover:bg-gold transition-all">
-                                            <i class="fas fa-phone-alt text-[8px] group-hover:text-forest"></i>
-                                        </div>
-                                        <span class="text-xs font-black tracking-widest">{{ $phone }}</span>
-                                    </a>
-                                @endforeach
-                            </div>
+                <div class="bg-white p-8 rounded-[2rem] border border-gold/5 shadow-elite max-w-2xl mx-auto">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-forest rounded-xl flex items-center justify-center text-gold">
+                            <i class="fas fa-id-card text-sm"></i>
                         </div>
-                    @endforeach
+                        <h4 class="text-lg font-black text-forest uppercase tracking-tight">Concierge Details</h4>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-gold block mb-1">Inquiry Channels</span>
+                            <div class="text-sm font-black text-forest uppercase tracking-tight">{{ $selectedAgency->email ?? $packageMetadata['contact_info']['email'] }}</div>
+                        </div>
+                        <div>
+                            <span class="text-[8px] font-black uppercase tracking-widest text-gold block mb-1">Official Portal</span>
+                            <div class="text-sm font-black text-forest uppercase tracking-tight break-all">{{ $packageMetadata['contact_info']['website'] }}</div>
+                        </div>
+                        <div class="pt-4 flex flex-col gap-3">
+                            <a href="tel:+91{{ $agencyPhone }}" class="flex items-center gap-4 text-forest hover:text-gold transition-colors group">
+                                <div class="w-8 h-8 rounded-full border border-gold/20 flex items-center justify-center group-hover:bg-gold transition-all">
+                                    <i class="fas fa-phone-alt text-[8px] group-hover:text-forest"></i>
+                                </div>
+                                <span class="text-xs font-black tracking-widest">+91 {{ $agencyPhone }}</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

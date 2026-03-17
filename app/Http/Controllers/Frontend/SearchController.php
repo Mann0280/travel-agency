@@ -20,14 +20,16 @@ class SearchController extends Controller
         // 2. Fetch metadata for dynamic search UI from all approved packages
         $dbFromCities = Package::approved()->whereNotNull('from_city')->pluck('from_city')->unique()->toArray();
         $dbDepartureCitiesArray = Package::approved()->get()->flatMap(function($p) {
-            // Handle both Model and stdClass
             $cities = $p->departure_cities ?? [];
             if (is_string($cities)) {
                 $cities = json_decode($cities, true) ?? [];
             }
-            return is_array($cities) ? $cities : [];
-        })->unique()->toArray();
+            return collect($cities)->map(function($cityData) {
+                return is_array($cityData) ? ($cityData['city'] ?? '') : $cityData;
+            });
+        })->filter()->unique()->toArray();
         $uniqueDepartureCities = collect(array_merge($dbFromCities, $dbDepartureCitiesArray))->unique()->values()->all();
+
         sort($uniqueDepartureCities);
 
         $validDestinations = Destination::whereHas('packages', fn($q) => $q->approved())->pluck('name')->unique()->values()->all();
@@ -47,8 +49,9 @@ class SearchController extends Controller
         if ($fromFilter) {
             $query->where(function($q) use ($fromFilter) {
                 $q->where('from_city', $fromFilter)
-                  ->orWhereJsonContains('departure_cities', $fromFilter);
+                  ->orWhereJsonContains('departure_cities', [['city' => $fromFilter]]);
             });
+
         }
 
         // To Filter (Destination)

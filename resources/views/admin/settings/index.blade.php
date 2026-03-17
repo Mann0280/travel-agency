@@ -79,7 +79,8 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="form-label">Site Name</label>
-                                        <input type="text" name="site_name" class="form-input" value="{{ \App\Models\Setting::get('site_name', 'ZUBEEE Tours & Travels') }}">
+                                        <input type="text" name="site_name" class="form-input" value="{{ \App\Models\Setting::get('site_name', 'ZUBEEE') }}">
+
                                     </div>
                                     <div>
                                         <label class="form-label">Site URL</label>

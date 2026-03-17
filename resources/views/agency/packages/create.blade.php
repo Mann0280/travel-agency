@@ -219,13 +219,9 @@
                              <h3 class="text-md font-bold text-gray-900">Pricing & Availability</h3>
                         </div>
                         <div class="p-5 space-y-5">
-                             <div>
-                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide block mb-1">Base Price</label>
-                                <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₹</span>
-                                    <input type="number" name="price" class="form-input pl-8 text-xl font-bold text-forest" required min="0" value="{{ old('price') }}">
-                                </div>
-                            </div>
+                             {{-- Base Price Removed as per requirements --}}
+    <input type="hidden" name="price" value="0">
+
                             
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -306,13 +302,10 @@
                         </div>
                     </div>
                     
-                     <!-- Branches & Contact -->
+                     <!-- Contact Details -->
                     <div class="card border-0 shadow-sm ring-1 ring-gray-100">
-                         <div class="p-5 border-b border-gray-100 flex justify-between items-center">
-                             <h3 class="text-md font-bold text-gray-900">Branches</h3>
-                             <button type="button" onclick="addBranch()" class="text-xs btn btn-xs btn-outline bg-white border-dashed">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                         <div class="p-5 border-b border-gray-100 items-center">
+                             <h3 class="text-md font-bold text-gray-900">Contact Details</h3>
                         </div>
                         <div class="p-5 space-y-4">
                             <!-- Contact Info -->
@@ -325,10 +318,6 @@
                                     <label class="form-label text-[10px] uppercase text-gray-400">Website <span class="text-red-500">*</span></label>
                                     <input type="url" name="contact_info[website]" class="form-input text-xs py-1" value="{{ old('contact_info.website') }}" required placeholder="e.g., https://agency.com">
                                 </div>
-                            </div>
-
-                            <div id="branchesContainer" class="space-y-3">
-                                <p id="noBranchesMsg" class="text-xs text-center text-gray-400 italic">No branches added. Click '+' to add.</p>
                             </div>
                         </div>
                     </div>
@@ -344,18 +333,31 @@
     function addDepartureCity() {
         const container = document.getElementById('departureCitiesContainer');
         const div = document.createElement('div');
-         div.className = 'flex items-center gap-2 group/city';
+        div.className = 'flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100 group/city relative';
         div.innerHTML = `
-            <div class="relative w-full">
-                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"><i class="fas fa-plane-departure"></i></span>
-                <input type="text" name="departure_cities[]" class="form-input text-xs py-1.5 pl-8" placeholder="e.g., Delhi">
-            </div>
-            <button type="button" onclick="this.parentElement.remove()" class="text-gray-300 hover:text-red-500 transition-opacity">
-                <i class="fas fa-times"></i>
+            <button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -right-2 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm z-10">
+                <i class="fas fa-times text-[10px]"></i>
             </button>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="relative">
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"><i class="fas fa-plane-departure"></i></span>
+                    <input type="text" name="departure_cities[][city]" class="form-input text-[10px] py-1.5 pl-7" placeholder="City (e.g. Delhi)" required>
+                </div>
+                <div class="relative">
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">₹</span>
+                    <input type="number" name="departure_cities[][price]" class="form-input text-[10px] py-1.5 pl-6" placeholder="Price" required min="0">
+                </div>
+            </div>
         `;
+        
+        // Fix for array naming to group city and price
+        const index = container.querySelectorAll('.group\\/city').length;
+        div.querySelector('input[name="departure_cities[][city]"]').name = `departure_cities[${index}][city]`;
+        div.querySelector('input[name="departure_cities[][price]"]').name = `departure_cities[${index}][price]`;
+        
         container.appendChild(div);
     }
+
 
     function addItem(field) {
         const container = document.getElementById(field + 'Container');
@@ -440,31 +442,6 @@
         container.insertBefore(div, btn);
     }
 
-    let branchCount = 0;
-    function addBranch() {
-        document.getElementById('noBranchesMsg')?.remove();
-        const container = document.getElementById('branchesContainer');
-        const div = document.createElement('div');
-        div.className = 'branch-item border border-gray-200 rounded-lg p-3 bg-gray-50/50 text-sm relative group';
-        div.innerHTML = `
-            <button type="button" onclick="this.closest('.branch-item').remove()" class="absolute top-2 right-2 text-gray-300 hover:text-red-500 opacity-100 transition-opacity">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="space-y-2">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-building text-gray-400 text-xs"></i>
-                    <input type="text" name="branches[${branchCount}][city]" class="form-input text-xs py-1 bg-white" required placeholder="City Name">
-                </div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-phone text-gray-400 text-xs"></i>
-                    <input type="text" name="branches[${branchCount}][phone]" class="form-input text-xs py-1 bg-white" required placeholder="Phone Number">
-                </div>
-                <textarea name="branches[${branchCount}][address]" rows="2" class="form-textarea text-xs py-1 bg-white w-full" required placeholder="Full Address"></textarea>
-            </div>
-        `;
-        container.appendChild(div);
-        branchCount++;
-    }
 </script>
 @endpush
 @endsection
