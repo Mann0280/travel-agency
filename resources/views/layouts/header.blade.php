@@ -12,7 +12,8 @@
         <!-- Centered Logo - ENHANCED -->
         <div class="logo-container flex-1 flex justify-center">
             <a href="{{ route('home') }}" class="flex items-center no-underline group">
-                <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEEE Tours & Travels' }}" class="logo-image group-hover:brightness-110">
+                <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEEE' }}" class="logo-image group-hover:brightness-110">
+
             </a>
         </div>
 
@@ -70,7 +71,8 @@
         <!-- Center - Enhanced Logo -->
         <div class="mobile-header-center">
             <a href="{{ route('home') }}" class="flex items-center no-underline group">
-                <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEEE Tours & Travels' }}" class="mobile-logo group-hover:brightness-110">
+                <img src="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}" alt="{{ $site_settings->get('site_name') ?? 'ZUBEEE' }}" class="mobile-logo group-hover:brightness-110">
+
             </a>
         </div>
 

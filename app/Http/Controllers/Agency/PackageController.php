@@ -35,12 +35,15 @@ class PackageController extends AgencyBaseController
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'duration' => 'required|string|max:255',
             'duration_days' => 'required|integer|min:1',
             'from_city' => 'nullable|string|max:255',
             'location' => 'required|string|max:255',
-            'departure_cities' => 'required|array',
+            'departure_cities' => 'required|array|min:1',
+            'departure_cities.*.city' => 'required|string',
+            'departure_cities.*.price' => 'required|numeric|min:0',
+
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'category' => 'required|string',
@@ -52,11 +55,17 @@ class PackageController extends AgencyBaseController
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
             'available_months' => 'nullable|array',
-            'branches' => 'nullable|array',
-            'contact_info' => 'required|array',
-            'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
         ]);
+
+        // Calculate minimum price from departure cities
+        if (!empty($data['departure_cities'])) {
+            $prices = array_column($data['departure_cities'], 'price');
+            if (!empty($prices)) {
+                $data['price'] = min($prices);
+            }
+        }
+
 
         $data['agency_id'] = $agency->id;
         $data['is_featured'] = $request->has('featured') && $request->featured == '1';
@@ -95,12 +104,15 @@ class PackageController extends AgencyBaseController
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'image_upload' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'duration' => 'required|string|max:255',
             'duration_days' => 'required|integer|min:1',
             'from_city' => 'nullable|string|max:255',
             'location' => 'required|string|max:255',
-            'departure_cities' => 'required|array',
+            'departure_cities' => 'required|array|min:1',
+            'departure_cities.*.city' => 'required|string',
+            'departure_cities.*.price' => 'required|numeric|min:0',
+
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'category' => 'required|string',
@@ -112,11 +124,17 @@ class PackageController extends AgencyBaseController
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
             'available_months' => 'nullable|array',
-            'branches' => 'nullable|array',
-            'contact_info' => 'required|array',
-            'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
         ]);
+
+        // Calculate minimum price from departure cities
+        if (!empty($data['departure_cities'])) {
+            $prices = array_column($data['departure_cities'], 'price');
+            if (!empty($prices)) {
+                $data['price'] = min($prices);
+            }
+        }
+
 
         $data['is_featured'] = $request->has('featured') && $request->featured == '1';
         $data['is_approved'] = true; // Automatically approved as per user request

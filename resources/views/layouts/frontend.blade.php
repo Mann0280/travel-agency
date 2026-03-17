@@ -8,13 +8,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', ($site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE') . ' - Tours & Travels')</title>
+    <title>@yield('title', ($site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE'))</title>
+
     <meta name="description"
-        content="{{ $site_settings->get('meta_description') ?? 'ZUBEEE Tours & Travels - Your trusted partner for unforgettable travel experiences.' }}">
+        content="{{ $site_settings->get('meta_description') ?? 'ZUBEEE - Your trusted partner for unforgettable travel experiences.' }}">
+
     <meta name="keywords" content="{{ $site_settings->get('meta_keywords') ?? 'travel, tours, vacation, packages, adventure, holiday' }}">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="{{ $site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE' }} - Tours & Travels">
+    <meta property="og:title" content="{{ $site_settings->get('meta_title') ?? $site_settings->get('site_name') ?? 'ZUBEEE' }}">
+
     <meta property="og:description" content="{{ $site_settings->get('meta_description') ?? 'Your trusted partner for unforgettable travel experiences' }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">

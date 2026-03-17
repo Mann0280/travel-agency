@@ -82,8 +82,12 @@ class AgencyController extends Controller
         }
 
         if (!empty($fromFilter)) {
-            $query->whereJsonContains('departure_cities', $fromFilter);
+            $query->where(function($q) use ($fromFilter) {
+                $q->where('from_city', $fromFilter)
+                  ->orWhereJsonContains('departure_cities', [['city' => $fromFilter]]);
+            });
         }
+
 
         if (!empty($toFilter)) {
             $query->whereHas('destination', function($q) use ($toFilter) {
