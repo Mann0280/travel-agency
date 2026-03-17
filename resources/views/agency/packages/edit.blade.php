@@ -387,12 +387,12 @@
                             <!-- Contact Info -->
                             <div class="grid grid-cols-1 gap-2 border-b border-gray-100 pb-4">
                                 <div>
-                                    <label class="form-label text-[10px] uppercase text-gray-400">Contact Email</label>
-                                    <input type="email" name="contact_info[email]" class="form-input text-xs py-1" value="{{ old('contact_info.email', $package->contact_info['email'] ?? '') }}" placeholder="Optional">
+                                    <label class="form-label text-[10px] uppercase text-gray-400">Contact Email <span class="text-red-500">*</span></label>
+                                    <input type="email" name="contact_info[email]" class="form-input text-xs py-1" value="{{ old('contact_info.email', $package->contact_info['email'] ?? '') }}" required placeholder="e.g., contact@agency.com">
                                 </div>
                                  <div>
-                                    <label class="form-label text-[10px] uppercase text-gray-400">Website</label>
-                                    <input type="url" name="contact_info[website]" class="form-input text-xs py-1" value="{{ old('contact_info.website', $package->contact_info['website'] ?? '') }}" placeholder="Optional">
+                                    <label class="form-label text-[10px] uppercase text-gray-400">Website <span class="text-red-500">*</span></label>
+                                    <input type="url" name="contact_info[website]" class="form-input text-xs py-1" value="{{ old('contact_info.website', $package->contact_info['website'] ?? '') }}" required placeholder="e.g., https://agency.com">
                                 </div>
                             </div>
 

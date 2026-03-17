@@ -66,7 +66,16 @@ class AgencyDetailsController extends Controller
             'exclusions' => $selectedPackage->exclusions ?? $defaults['exclusions'],
             'things_to_carry' => $selectedPackage->things_to_carry ?? $defaults['things_to_carry'],
             'terms_conditions' => $selectedPackage->terms_conditions ?? $defaults['terms_conditions'],
-            'contact_info' => $selectedPackage->contact_info ?? $defaults['contact_info'],
+            'contact_info' => [
+                'email' => $selectedPackage->contact_info['email'] ?? $defaults['contact_info']['email'],
+                'website' => $selectedPackage->contact_info['website'] ?? $defaults['contact_info']['website'],
+                'branches' => !empty($selectedPackage->branches) ? array_map(function($branch) {
+                    if (!isset($branch['phones']) && isset($branch['phone'])) {
+                        $branch['phones'] = [$branch['phone']];
+                    }
+                    return $branch;
+                }, $selectedPackage->branches) : $defaults['contact_info']['branches'],
+            ],
         ];
 
         return view('frontend.agency-details', compact('selectedPackage', 'selectedAgency', 'fromFilter', 'dateFilter', 'packageMetadata', 'agencyContacts'));
