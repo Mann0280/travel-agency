@@ -53,7 +53,9 @@ class PackageController extends AgencyBaseController
             'terms_conditions' => 'nullable|array',
             'available_months' => 'nullable|array',
             'branches' => 'nullable|array',
-            'contact_info' => 'nullable|array',
+            'contact_info' => 'required|array',
+            'contact_info.email' => 'required|email',
+            'contact_info.website' => 'required|url',
         ]);
 
         $data['agency_id'] = $agency->id;
@@ -111,7 +113,9 @@ class PackageController extends AgencyBaseController
             'terms_conditions' => 'nullable|array',
             'available_months' => 'nullable|array',
             'branches' => 'nullable|array',
-            'contact_info' => 'nullable|array',
+            'contact_info' => 'required|array',
+            'contact_info.email' => 'required|email',
+            'contact_info.website' => 'required|url',
         ]);
 
         $data['is_featured'] = $request->has('featured') && $request->featured == '1';
