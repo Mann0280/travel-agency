@@ -126,9 +126,7 @@ class PackageController extends Controller
             'exclusions' => 'nullable|array',
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
-            'contact_info' => 'required|array',
-            'contact_info.email' => 'required|email',
-            'contact_info.website' => 'required|url',
+
 
             'destination_id' => 'required|exists:destinations,id',
         ]);
@@ -144,7 +142,7 @@ class PackageController extends Controller
         $data['exclusions'] = $request->input('exclusions', []);
         $data['things_to_carry'] = $request->input('things_to_carry', []);
         $data['terms_conditions'] = $request->input('terms_conditions', []);
-        $data['contact_info'] = $request->input('contact_info', []);
+
 
         // Calculate minimum price from departure cities
         if (!empty($data['departure_cities'])) {
@@ -201,9 +199,7 @@ class PackageController extends Controller
             'exclusions' => 'nullable|array',
             'things_to_carry' => 'nullable|array',
             'terms_conditions' => 'nullable|array',
-            'contact_info' => 'required|array',
-            'contact_info.email' => 'required|email',
-            'contact_info.website' => 'required|url',
+
 
             'destination_id' => 'required|exists:destinations,id',
         ]);
@@ -218,7 +214,7 @@ class PackageController extends Controller
         $data['exclusions'] = $request->input('exclusions', []);
         $data['things_to_carry'] = $request->input('things_to_carry', []);
         $data['terms_conditions'] = $request->input('terms_conditions', []);
-        $data['contact_info'] = $request->input('contact_info', []);
+
 
         // Calculate minimum price from departure cities
         if (!empty($data['departure_cities'])) {
