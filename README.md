@@ -1,4 +1,4 @@
-# ZUBEEE Tours & Travels
+# ZUBEEE
 
 A modern, responsive travel agency website built with Laravel 12, featuring beautiful UI design and comprehensive travel package management.
 

@@ -129,13 +129,7 @@ class PackageController extends Controller
             'contact_info' => 'required|array',
             'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
-<<<<<<< HEAD
-            'branches' => 'nullable|array',
-            'branches.*.city' => 'required_with:branches|string',
-            'branches.*.address' => 'required_with:branches|string',
-            'branches.*.phone' => 'required_with:branches|string',
-=======
->>>>>>> 9045ab82ddbea83eb9d0e2132c8aa2ebdfa5e4e0
+
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
@@ -210,13 +204,7 @@ class PackageController extends Controller
             'contact_info' => 'required|array',
             'contact_info.email' => 'required|email',
             'contact_info.website' => 'required|url',
-<<<<<<< HEAD
-            'branches' => 'nullable|array',
-            'branches.*.city' => 'required_with:branches|string',
-            'branches.*.address' => 'required_with:branches|string',
-            'branches.*.phone' => 'required_with:branches|string',
-=======
->>>>>>> 9045ab82ddbea83eb9d0e2132c8aa2ebdfa5e4e0
+
             'destination_id' => 'required|exists:destinations,id',
         ]);
 
