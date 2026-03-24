@@ -52,8 +52,8 @@
         </div>
 
         <div class="mt-20 text-center">
-            <a href="{{ route('home') }}" class="inline-block px-10 py-5 bg-forest text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-gold transition-all shadow-elite">
-                Return to Port
+            <a href="{{ route('home') }}" class="inline-block px-10 py-5 bg-forest text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-gold transition-all shadow-elite text-center">
+                Back to Home
             </a>
         </div>
     </main>

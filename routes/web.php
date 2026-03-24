@@ -9,6 +9,7 @@ use App\Http\Controllers\Frontend\AgencyController;
 use App\Http\Controllers\Frontend\PackageDetailsController;
 use App\Http\Controllers\Frontend\AgencyDetailsController;
 use App\Http\Controllers\Frontend\ContentController;
+use App\Http\Controllers\User\ForgotPasswordController;
 
 
 
@@ -23,6 +24,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Password Reset Routes
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
 // Account routes
 Route::middleware('auth.check')->group(function () {

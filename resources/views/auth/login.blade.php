@@ -62,7 +62,7 @@
             </div>
             @endif
             
-            <form class="mt-8 space-y-6" method="POST" action="{{ route('login') }}">
+            <form id="loginForm" class="mt-8 space-y-6" method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
@@ -96,6 +96,17 @@
                     </div>
                 </div>
 
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input id="agree_terms" name="agree_terms" type="checkbox" required 
+                            class="h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-transparent rounded">
+                        <label for="agree_terms" class="ml-2 block text-sm text-gray-300">
+                            By continuing, you agree to our <a href="{{ \App\Models\Setting::get('terms_conditions_url', '/info/terms') }}" target="_blank" class="text-secondary hover:text-gold transition underline">Terms & Conditions</a> and <a href="/info/privacy" target="_blank" class="text-secondary hover:text-gold transition underline">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <div id="terms-error" class="hidden text-red-500 text-xs mt-1">Please agree to the Terms & Conditions to proceed.</div>
+                </div>
+
                 <div>
                     <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-secondary hover:bg-gold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all transform hover:-translate-y-1 shadow-lg">
                         Sign in
@@ -126,6 +137,19 @@
         AOS.init({
             duration: 800,
             once: true
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const checkbox = document.getElementById('agree_terms');
+            const errorDiv = document.getElementById('terms-error');
+            
+            if (!checkbox.checked) {
+                e.preventDefault();
+                errorDiv.classList.remove('hidden');
+                checkbox.focus();
+            } else {
+                errorDiv.classList.add('hidden');
+            }
         });
     </script>
 </body>

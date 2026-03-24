@@ -104,6 +104,15 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
         Route::get('/partner', [AccountContentController::class, 'partner'])->name('partner');
         Route::post('/partner', [AccountContentController::class, 'updatePartner'])->name('partner.update');
         
+        Route::get('/terms', [AccountContentController::class, 'terms'])->name('terms');
+        Route::post('/terms', [AccountContentController::class, 'updateTerms'])->name('terms.update');
+
+        Route::get('/privacy', [AccountContentController::class, 'privacy'])->name('privacy');
+        Route::post('/privacy', [AccountContentController::class, 'updatePrivacy'])->name('privacy.update');
+
+        // Password Reset Logs
+        Route::get('/logs/password-resets', [AccountContentController::class, 'passwordResetLogs'])->name('admin.logs.passwordResets');
+        
         Route::get('/feedback', [AccountContentController::class, 'feedback'])->name('feedback');
         Route::post('/feedback/settings', [AccountContentController::class, 'updateFeedbackSettings'])->name('feedback.settings');
         Route::post('/feedback/category', [AccountContentController::class, 'storeFeedbackCategory'])->name('feedback.category.store');

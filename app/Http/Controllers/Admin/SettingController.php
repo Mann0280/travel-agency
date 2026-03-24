@@ -36,7 +36,7 @@ class SettingController extends Controller
             'mail_host', 'mail_port', 'mail_username', 'mail_password',
             'stripe_key', 'stripe_secret',
             'facebook_url', 'instagram_url', 'twitter_url',
-            'package_categories'
+            'package_categories', 'terms_conditions_url'
         ];
 
         foreach ($keys as $key) {

@@ -97,7 +97,7 @@
             </div>
         @endif
         
-        <form class="mt-8 space-y-6" action="{{ route('register') }}" method="POST">
+        <form id="registerForm" class="mt-8 space-y-6" action="{{ route('register') }}" method="POST">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -133,9 +133,10 @@
                 <input id="agree_terms" name="agree_terms" type="checkbox" required
                        class="h-4 w-4 bg-transparent border-[#a8894d] text-[#a8894d] rounded focus:ring-0">
                 <label for="agree_terms" class="ml-2 block text-sm text-gray-300">
-                    I agree to the <a href="#" class="gold-link">Terms and Conditions</a> and <a href="#" class="gold-link">Privacy Policy</a>
+                        I agree to the <a href="{{ \App\Models\Setting::get('terms_conditions_url', '/info/terms') }}" target="_blank" class="text-secondary hover:text-gold transition">Terms and Conditions</a> and <a href="/info/privacy" target="_blank" class="text-secondary hover:text-gold transition">Privacy Policy</a>
                 </label>
             </div>
+            <div id="terms-error" class="hidden text-red-500 text-xs mt-1">Please agree to the Terms & Conditions to proceed.</div>
 
             <div>
                 <button type="submit" class="gold-button w-full shadow-lg">
@@ -146,3 +147,20 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const checkbox = document.getElementById('agree_terms');
+        const errorDiv = document.getElementById('terms-error');
+        
+        if (!checkbox.checked) {
+            e.preventDefault();
+            errorDiv.classList.remove('hidden');
+            checkbox.focus();
+        } else {
+            errorDiv.classList.add('hidden');
+        }
+    });
+</script>
+@endpush

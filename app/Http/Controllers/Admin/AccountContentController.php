@@ -26,9 +26,15 @@ class AccountContentController extends Controller
         $feedbackSettings = AccountContent::where('slug', 'feedback_settings')->first();
         $categoryCount = FeedbackCategory::count();
 
+        $terms = AccountContent::where('slug', 'terms')->first();
+        $hasTerms = $terms ? true : false;
+        
+        $privacy = AccountContent::where('slug', 'privacy')->first();
+        $hasPrivacy = $privacy ? true : false;
+
         return view('admin.account-content.index', compact(
             'faqCount', 'activeFaqCount', 'aboutData', 'valueCount',
-            'partnerData', 'benefitCount', 'categoryCount'
+            'partnerData', 'benefitCount', 'categoryCount', 'hasTerms', 'hasPrivacy'
         ));
     }
 
@@ -210,6 +216,96 @@ class AccountContentController extends Controller
         );
 
         return redirect()->route('admin.account-content.partner')->with('success', 'Partner content updated successfully!');
+    }
+
+    // Terms & Conditions
+    public function terms()
+    {
+        $terms = AccountContent::firstOrCreate(['slug' => 'terms'], [
+            'type' => 'policy',
+            'title' => 'Terms & Conditions',
+            'content' => 'Your terms and conditions content goes here...',
+            'data' => [
+                'last_updated_by' => 'Admin',
+                'meta_title' => 'Terms & Conditions | ZUBEEE',
+                'meta_description' => 'Read our terms and conditions for travelers.'
+            ]
+        ]);
+        
+        return view('admin.account-content.terms', compact('terms'));
+    }
+
+    public function updateTerms(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+        ]);
+
+        AccountContent::updateOrCreate(
+            ['slug' => 'terms'],
+            [
+                'type' => 'policy',
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'is_active' => true,
+                'data' => [
+                    'last_updated_by' => 'Admin',
+                    'meta_title' => $validated['meta_title'] ?? $validated['title'],
+                    'meta_description' => $validated['meta_description'] ?? '',
+                    'updated_at' => now()->toDateTimeString()
+                ]
+            ]
+        );
+
+        return redirect()->route('admin.account-content.terms')->with('success', 'Terms & Conditions updated successfully!');
+    }
+
+    // Privacy Policy
+    public function privacy()
+    {
+        $privacy = AccountContent::firstOrCreate(['slug' => 'privacy'], [
+            'type' => 'policy',
+            'title' => 'Privacy Policy',
+            'content' => 'Your privacy policy content goes here...',
+            'data' => [
+                'last_updated_by' => 'Admin',
+                'meta_title' => 'Privacy Policy | ZUBEEE',
+                'meta_description' => 'Read our privacy policy and how we handle your data.'
+            ]
+        ]);
+        
+        return view('admin.account-content.privacy', compact('privacy'));
+    }
+
+    public function updatePrivacy(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+        ]);
+
+        AccountContent::updateOrCreate(
+            ['slug' => 'privacy'],
+            [
+                'type' => 'policy',
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'is_active' => true,
+                'data' => [
+                    'last_updated_by' => 'Admin',
+                    'meta_title' => $validated['meta_title'] ?? $validated['title'],
+                    'meta_description' => $validated['meta_description'] ?? '',
+                    'updated_at' => now()->toDateTimeString()
+                ]
+            ]
+        );
+
+        return redirect()->route('admin.account-content.privacy')->with('success', 'Privacy Policy updated successfully!');
     }
 
     // Feedback

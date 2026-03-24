@@ -17,7 +17,7 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
+        $response->assertViewIs('user.auth.login');
     }
 
     /**
@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->get('/register');
         $response->assertStatus(200);
-        $response->assertViewIs('auth.register');
+        $response->assertViewIs('user.auth.register');
     }
 
     /**
@@ -38,6 +38,7 @@ class AuthenticationTest extends TestCase
         $response = $this->post('/login', [
             'email' => 'invalid@example.com',
             'password' => 'invalid_password',
+            'agree_terms' => 'on',
         ]);
 
         $response->assertStatus(302);
@@ -58,6 +59,7 @@ class AuthenticationTest extends TestCase
         $response = $this->post('/login', [
             'email' => 'test@example.com',
             'password' => 'password',
+            'agree_terms' => 'on',
         ]);
 
         $response->assertRedirect(route('account'));
@@ -78,9 +80,10 @@ class AuthenticationTest extends TestCase
         $response = $this->post('/login', [
             'email' => 'admin@example.com',
             'password' => 'password',
+            'agree_terms' => 'on',
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
+        $response->assertRedirect(route('account'));
         $this->assertAuthenticatedAs($admin);
     }
 
@@ -98,6 +101,7 @@ class AuthenticationTest extends TestCase
         $response = $this->post('/login', [
             'email' => 'user@example.com',
             'password' => 'password',
+            'agree_terms' => 'on',
         ]);
 
         $response->assertRedirect(route('account'));
@@ -119,6 +123,7 @@ class AuthenticationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'remember_me' => true,
+            'agree_terms' => 'on',
         ]);
 
         $response->assertRedirect(route('account'));
@@ -136,6 +141,7 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'phone' => '1234567890',
+            'agree_terms' => 'on',
         ]);
 
         $response->assertRedirect(route('account'));

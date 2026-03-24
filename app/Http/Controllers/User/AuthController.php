@@ -31,7 +31,11 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
+            'agree_terms' => 'accepted',
         ]);
+        
+        // Remove agree_terms from credentials for Auth::attempt
+        unset($credentials['agree_terms']);
 
         // Add remember me functionality
         $remember = $request->has('remember_me');
@@ -76,6 +80,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:20',
+            'agree_terms' => 'accepted',
         ]);
 
         // Create the user

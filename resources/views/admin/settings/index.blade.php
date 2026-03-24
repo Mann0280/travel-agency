@@ -86,6 +86,10 @@
                                         <label class="form-label">Site URL</label>
                                         <input type="url" name="site_url" class="form-input" value="{{ \App\Models\Setting::get('site_url', 'https://zubeee-travels.com') }}">
                                     </div>
+                                    <div class="md:col-span-2">
+                                        <label class="form-label">Terms & Conditions URL</label>
+                                        <input type="text" name="terms_conditions_url" class="form-input" value="{{ \App\Models\Setting::get('terms_conditions_url', 'terms.html') }}" placeholder="e.g., terms.html or https://example.com/terms">
+                                    </div>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

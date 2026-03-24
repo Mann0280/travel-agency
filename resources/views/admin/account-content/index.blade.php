@@ -99,6 +99,30 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-file-contract text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#17320b]">{{ $hasTerms ? '1' : '0' }}</p>
+                    <p class="text-gray-600">Terms & Conditions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-user-shield text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-[#17320b]">{{ $hasPrivacy ? '1' : '0' }}</p>
+                    <p class="text-gray-600">Privacy Policy</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Content Management Cards -->
@@ -176,6 +200,70 @@
                 <i class="fas fa-comment-alt mr-2"></i> Configure Feedback
             </a>
         </div>
+
+        <!-- Terms & Conditions -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-[#17320b]">Terms & Conditions</h3>
+                <a href="{{ route('admin.account-content.terms') }}" class="text-[#a8894d] text-sm font-medium hover:text-[#9d7c4f]">Manage</a>
+            </div>
+            
+            <div class="space-y-3">
+                @php $terms = \App\Models\AccountContent::where('slug', 'terms')->first(); @endphp
+                <div class="text-[10px] uppercase font-bold text-gray-400 mb-1">Live Content Preview:</div>
+                <p class="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 min-h-[80px]">{{ $terms->content ?? 'No content set.' }}</p>
+            </div>
+            
+            <a href="{{ route('admin.account-content.terms') }}" class="block mt-4 btn btn-primary">
+                <i class="fas fa-edit mr-2"></i> Edit Content
+            </a>
+        </div>
+
+        <!-- Privacy Policy -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-[#17320b]">Privacy Policy</h3>
+                <a href="{{ route('admin.account-content.privacy') }}" class="text-[#a8894d] text-sm font-medium hover:text-[#9d7c4f]">Manage</a>
+            </div>
+            
+            <div class="space-y-3">
+                @php $privacy = \App\Models\AccountContent::where('slug', 'privacy')->first(); @endphp
+                <div class="text-[10px] uppercase font-bold text-gray-400 mb-1">Live Content Preview:</div>
+                <p class="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 min-h-[80px]">{{ $privacy->content ?? 'No privacy policy set.' }}</p>
+            </div>
+            
+            <a href="{{ route('privacy.update') }}" class="block mt-4 btn btn-primary">
+                <i class="fas fa-user-shield mr-2"></i> Edit Content
+            </a>
+        </div>
+
+        <!-- Security Logs -->
+        <div class="card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-[#17320b]">Security Activity</h3>
+                <a href="{{ route('admin.logs.passwordResets') }}" class="text-[#a8894d] text-sm font-medium hover:text-[#9d7c4f]">View All Logs</a>
+            </div>
+            
+            <div class="space-y-3">
+                @php 
+                    $recentLogs = DB::table('password_reset_logs')->orderBy('created_at', 'desc')->take(3)->get(); 
+                @endphp
+                @forelse($recentLogs as $log)
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-100">
+                        <div class="text-[10px] font-medium text-gray-600 truncate mr-2">{{ $log->email }}</div>
+                        <span class="text-[9px] px-1.5 py-0.5 rounded-full {{ $log->status === 'success' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
+                            {{ ucfirst($log->status) }}
+                        </span>
+                    </div>
+                @empty
+                    <p class="text-xs text-gray-400 italic">No recent activity.</p>
+                @endforelse
+            </div>
+            
+            <a href="{{ route('admin.logs.passwordResets') }}" class="block mt-4 btn btn-secondary">
+                <i class="fas fa-history mr-2"></i> Password Reset Logs
+            </a>
+        </div>
     </div>
 
     <!-- Preview Section (MATCHING USER SNIPPET) -->
@@ -220,6 +308,18 @@
                 <div class="border border-secondary rounded-lg p-3">
                     <h4 class="text-sm font-bold text-text mb-2">Partner Preview</h4>
                     <p class="text-xs text-gray-600">{{ Str::limit($partnerData['description'] ?? '', 80) }}</p>
+                </div>
+
+                <!-- Terms Preview -->
+                <div class="border border-secondary rounded-lg p-3">
+                    <h4 class="text-sm font-bold text-text mb-2">Terms & Conditions Preview</h4>
+                    <p class="text-xs text-gray-600">{{ Str::limit($terms->content ?? '', 80) }}</p>
+                </div>
+
+                <!-- Privacy Preview -->
+                <div class="border border-secondary rounded-lg p-3">
+                    <h4 class="text-sm font-bold text-text mb-2">Privacy Policy Preview</h4>
+                    <p class="text-xs text-gray-600">{{ Str::limit($privacy->content ?? '', 80) }}</p>
                 </div>
             </div>
             
