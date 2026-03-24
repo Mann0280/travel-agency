@@ -63,7 +63,17 @@ class ForgotPasswordController extends Controller
         $this->logResetRequest($email, 'requested');
 
         // Send Email
-        Mail::to($email)->send(new ResetPasswordMail($token, $email));
+        try {
+            Mail::to($email)->send(new ResetPasswordMail($token, $email));
+        } catch (\Exception $e) {
+            // Log the error for the developer
+            \Illuminate\Support\Facades\Log::error('Mail sending failed: ' . $e->getMessage());
+            
+            // Log as failed in our custom logs
+            $this->logResetRequest($email, 'failed');
+            
+            return back()->with('status', 'We encountered an error sending the email. Please try again later or contact support.');
+        }
 
         return back()->with('status', $genericMessage);
     }
