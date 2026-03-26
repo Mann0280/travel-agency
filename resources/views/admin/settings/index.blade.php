@@ -177,6 +177,23 @@
                                     </div>
                                 </div>
 
+                                <div>
+                                    <label class="form-label">Site Favicon</label>
+                                    <div class="flex items-center space-x-6">
+                                        <div class="w-16 h-16 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center p-2">
+                                            @if(\App\Models\Setting::get('site_favicon'))
+                                                <img src="{{ asset(\App\Models\Setting::get('site_favicon')) }}" class="max-w-full max-h-full object-contain">
+                                            @else
+                                                <i class="fas fa-image text-2xl text-gray-300"></i>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1">
+                                            <input type="file" name="site_favicon" accept="image/x-icon,image/png,image/gif" class="form-input">
+                                            <p class="text-xs text-gray-500 mt-2">Recommended: 32x32px, ICO or PNG format</p>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                                     <div>
                                         <label class="form-label">Primary Color</label>

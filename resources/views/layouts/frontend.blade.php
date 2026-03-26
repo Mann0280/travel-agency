@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('favicon.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('favicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}">
-    <link rel="shortcut icon" href="{{ $site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ $site_settings->get('site_favicon') ? asset($site_settings->get('site_favicon')) : ($site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('favicon.png')) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ $site_settings->get('site_favicon') ? asset($site_settings->get('site_favicon')) : ($site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('favicon.png')) }}">
+    <link rel="apple-touch-icon" href="{{ $site_settings->get('site_favicon') ? asset($site_settings->get('site_favicon')) : ($site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png')) }}">
+    <link rel="shortcut icon" href="{{ $site_settings->get('site_favicon') ? asset($site_settings->get('site_favicon')) : ($site_settings->get('site_logo') ? asset($site_settings->get('site_logo')) : asset('assets/images/logo1.png')) }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">

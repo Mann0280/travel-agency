@@ -25,6 +25,14 @@ class SettingController extends Controller
             Setting::set('site_logo', 'storage/' . $path);
         }
 
+        // Handle Site Favicon Upload
+        if ($request->hasFile('site_favicon')) {
+            $file = $request->file('site_favicon');
+            $filename = 'favicon_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('uploads/settings', $filename, 'public');
+            Setting::set('site_favicon', 'storage/' . $path);
+        }
+
         // List of all expected keys (to handle checkboxes)
         $keys = [
             'site_name', 'site_url', 'contact_email', 'phone', 'address',
