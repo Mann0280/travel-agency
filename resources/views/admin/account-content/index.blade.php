@@ -232,7 +232,7 @@
                 <p class="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 min-h-[80px]">{{ $privacy->content ?? 'No privacy policy set.' }}</p>
             </div>
             
-            <a href="{{ route('privacy.update') }}" class="block mt-4 btn btn-primary">
+            <a href="{{ route('admin.account-content.privacy') }}" class="block mt-4 btn btn-primary">
                 <i class="fas fa-user-shield mr-2"></i> Edit Content
             </a>
         </div>
@@ -241,7 +241,7 @@
         <div class="card">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold text-[#17320b]">Security Activity</h3>
-                <a href="{{ route('admin.logs.passwordResets') }}" class="text-[#a8894d] text-sm font-medium hover:text-[#9d7c4f]">View All Logs</a>
+                <a href="{{ route('admin.account-content.logs.passwordResets') }}" class="text-[#a8894d] text-sm font-medium hover:text-[#9d7c4f]">View All Logs</a>
             </div>
             
             <div class="space-y-3">
@@ -260,7 +260,7 @@
                 @endforelse
             </div>
             
-            <a href="{{ route('admin.logs.passwordResets') }}" class="block mt-4 btn btn-secondary">
+            <a href="{{ route('admin.account-content.logs.passwordResets') }}" class="block mt-4 btn btn-secondary">
                 <i class="fas fa-history mr-2"></i> Password Reset Logs
             </a>
         </div>

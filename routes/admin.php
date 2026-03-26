@@ -111,7 +111,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
         Route::post('/privacy', [AccountContentController::class, 'updatePrivacy'])->name('privacy.update');
 
         // Password Reset Logs
-        Route::get('/logs/password-resets', [AccountContentController::class, 'passwordResetLogs'])->name('admin.logs.passwordResets');
+        Route::get('/logs/password-resets', [AccountContentController::class, 'passwordResetLogs'])->name('logs.passwordResets');
         
         Route::get('/feedback', [AccountContentController::class, 'feedback'])->name('feedback');
         Route::post('/feedback/settings', [AccountContentController::class, 'updateFeedbackSettings'])->name('feedback.settings');

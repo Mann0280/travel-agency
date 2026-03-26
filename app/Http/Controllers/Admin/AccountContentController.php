@@ -380,4 +380,10 @@ class AccountContentController extends Controller
         FeedbackCategory::findOrFail($id)->delete();
         return redirect()->route('admin.account-content.feedback')->with('success', 'Category deleted!');
     }
+
+    public function passwordResetLogs()
+    {
+        $logs = \DB::table('password_reset_logs')->orderBy('created_at', 'desc')->paginate(20);
+        return view('admin.account-content.logs', compact('logs'));
+    }
 }
